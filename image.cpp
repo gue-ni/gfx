@@ -17,8 +17,6 @@ Image::Image(const std::string &path, bool flip_vertically)
   assert(m_data != nullptr);
 }
 
-
-
 Image::~Image()
 {
   if (m_data != nullptr)

@@ -7,18 +7,19 @@
 #include <glm/gtx/io.hpp>
 
 #include <vector>
+#include <array>
 #include <memory>
 
 #include "image.h"
 
-#define IMAGE 1
+#define DEBUG_OPENGL 0
 
-#if 1
-#define GL_CALL(stmt)                      \
-  do                                       \
-  {                                        \
-    stmt;                                  \
-    CheckError(#stmt, __FILE__, __LINE__); \
+#if DEBUG_OPENGL
+#define GL_CALL(stmt)                          \
+  do                                           \
+  {                                            \
+    stmt;                                      \
+    check_gl_error(#stmt, __FILE__, __LINE__); \
   } while (0)
 #else
 #define GL_CALL(stmt) stmt
@@ -27,7 +28,7 @@
 namespace gl
 {
 
-  void CheckError(const char *stmt, const char *fname, int line);
+  void check_gl_error(const char *stmt, const char *fname, int line);
 
   struct Vertex
   {
@@ -162,7 +163,6 @@ namespace gl
     void set_uniform_buffer(const std::string &name, GLuint binding = 0U);
   };
 
-#if IMAGE
   struct Texture : public Object
   {
     const GLenum target;
@@ -190,41 +190,38 @@ namespace gl
     static std::shared_ptr<Texture> load(const std::string &path);
   };
 
-#if 0
-struct CubemapTexture : public Texture {
-  CubemapTexture(const std::array<std::string, 6>& paths, bool flip_vertically = false);
-};
-
-
-class TextureArray : public Object
-{
- public:
-  struct Params {
-    Image::Format format{Image::Format::RGB};
-    glm::ivec2 texture_size{1024};
-    int array_size{1};
-    GLint wrap_s{GL_CLAMP_TO_BORDER}, wrap_t{GL_CLAMP_TO_BORDER};
-    GLint min_filter{GL_LINEAR}, mag_filter{GL_LINEAR};
+  struct CubemapTexture : public Texture
+  {
+    CubemapTexture(const std::array<std::string, 6> &paths, bool flip_vertically = false);
   };
 
-  TextureArray(const Params& params);
-  void bind() const;
-  void bind(GLuint texture_unit) const;
-  void unbind() const;
-  void add_image(const Image& image);
-  void set_parameter(GLenum pname, GLint param);
-  void set_parameter(GLenum pname, GLfloat param);
-  void set_parameter(GLenum pname, const GLfloat* param);
+  class TextureArray : public Object
+  {
+  public:
+    struct Params
+    {
+      Image::Format format{Image::Format::RGB};
+      glm::ivec2 texture_size{1024};
+      int array_size{1};
+      GLint wrap_s{GL_CLAMP_TO_BORDER}, wrap_t{GL_CLAMP_TO_BORDER};
+      GLint min_filter{GL_LINEAR}, mag_filter{GL_LINEAR};
+    };
 
-  const GLenum target = GL_TEXTURE_2D_ARRAY;
+    TextureArray(const Params &params);
+    void bind() const;
+    void bind(GLuint texture_unit) const;
+    void unbind() const;
+    void add_image(const Image &image);
+    void set_parameter(GLenum pname, GLint param);
+    void set_parameter(GLenum pname, GLfloat param);
+    void set_parameter(GLenum pname, const GLfloat *param);
 
- private:
-  const Image::Format m_format;
-  const glm::ivec2 m_texture_size;
-  const int m_array_size;
-  int m_image_index = 0;
-};
-#endif
-#endif
+    const GLenum target = GL_TEXTURE_2D_ARRAY;
 
+  private:
+    const Image::Format m_format;
+    const glm::ivec2 m_texture_size;
+    const int m_array_size;
+    int m_image_index = 0;
+  };
 }

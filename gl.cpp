@@ -5,13 +5,12 @@
 namespace gl
 {
 
-  void CheckError(const char *stmt, const char *fname, int line)
+  void check_gl_error(const char *stmt, const char *fname, int line)
   {
     GLenum err = glGetError();
     if (err != GL_NO_ERROR)
     {
       printf("OpenGL error %d, at %s:%i - for %s\n", err, fname, line, stmt);
-      // abort();
     }
   }
 
@@ -105,8 +104,6 @@ namespace gl
     glUniformBlockBinding(m_id, index, binding);
   }
 
-#if IMAGE
-
   Texture::Texture(const std::string &path) : Texture(path, {})
   {
   }
@@ -152,7 +149,6 @@ namespace gl
 
   std::shared_ptr<Texture> Texture::load(const std::string &path) { return Texture::load(path, {}); }
 
-#if 0
   CubemapTexture::CubemapTexture(const std::array<std::string, 6> &paths, bool flip_vertically)
       : Texture(GL_TEXTURE_CUBE_MAP)
   {
@@ -212,7 +208,5 @@ namespace gl
                     image.data());
     glGenerateMipmap(target);
   }
-#endif
-#endif
 
 }
