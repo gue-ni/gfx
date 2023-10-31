@@ -8,10 +8,10 @@
 namespace gfx {
 class Transform {
 protected:
-  glm::vec3 m_local_position = glm::vec3(0.0f);
-  glm::quat m_local_rotation = glm::quat(glm::vec3(0.0f));
-  glm::vec3 m_local_scale = glm::vec3(1.0f);
-  glm::mat4 m_world_transform, m_local_transform;
+  glm::vec3 m_local_position;
+  glm::quat m_local_rotation;
+  glm::vec3 m_local_scale;
+  glm::mat4 m_local_transform, m_world_transform;
 
   Transform* m_parent = nullptr;
   std::vector<Transform*> m_children;
@@ -39,9 +39,9 @@ protected:
 
 public:
 
-  Transform() {
-    update_transform();
-  }
+  Transform()
+    : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f))
+  {}
 
   Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent = nullptr)
     : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
@@ -74,8 +74,6 @@ public:
   glm::mat4 get_local_transform() const { return m_local_transform; }
   glm::mat4 get_world_transform() const { return m_world_transform; }
 
-  void add_child(Transform* child) {
-    m_children.push_back(child);
-  }
+  void add_child(Transform* child) { m_children.push_back(child); }
 };
 }
