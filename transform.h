@@ -49,7 +49,16 @@ public:
     update_transform();
   }  
 
-  Transform* get_root() const { return (m_parent != nullptr) ? m_parent->get_root() : nullptr; }
+  Transform* get_root() const {
+    if (m_parent == nullptr) return nullptr;
+    Transform* root = m_parent;
+    while (root->get_parent() != nullptr) {
+      root = root->get_parent();  
+    }
+    return root;
+  }
+
+  Transform* get_parent() const { return m_parent; }
 
   glm::vec3 get_local_position() const { return m_local_position; }
   glm::vec3 get_local_scale() const { return m_local_scale; }
