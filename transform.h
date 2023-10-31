@@ -97,10 +97,10 @@ public:
   void add_child(Transform* child) { m_children.push_back(child); }
 
   // rotation only
-  glm::vec3 transform_direction(const glm::vec& direction) const {
+  glm::vec3 transform_direction(const glm::vec3& direction) const {
     return transform(glm::mat4(get_world_rotation()), direction);
   }
-  glm::vec3 inverse_transform_direction(const glm::vec& direction) const {
+  glm::vec3 inverse_transform_direction(const glm::vec3& direction) const {
     return inverse_transform(glm::mat4(get_world_rotation()), direction);
   }
 
@@ -109,11 +109,11 @@ public:
   // glm::vec3 inverse_transform_vector(const glm::vec& vector) const;
 
   // position, rotation and scale
-  glm::vec3 transform_point(const glm::vec& point) const {
+  glm::vec3 transform_point(const glm::vec3& point) const {
     return transform(get_world_transform(), point);
   }
 
-  glm::vec3 inverse_transform_point(const glm::vec& point) const {
+  glm::vec3 inverse_transform_point(const glm::vec3& point) const {
     return inverse_transform(get_world_transform(), point);
   }
 };
