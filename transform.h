@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #include <vector>
 
 namespace gfx {
@@ -62,6 +63,20 @@ public:
 
   void set_local_rotation(const glm::quat& rotation) {
     m_local_rotation = rotation;
+    update_transform();
+  }
+
+ void set_local_transform(const glm::mat4& matrix) {
+    glm::quat rotation;
+    glm::vec3 translation, skew, scale;
+    glm::vec4 perspective;
+
+    glm::decompose(matrix, scale, rotation, translation, skew, perspective);
+
+    m_local_position = translation;
+    // https://stackoverflow.com/a/40024726/11009152
+    m_local_rotation = glm::conjugate(rotation);
+    m_local_scale = scale;
     update_transform();
   }
 
