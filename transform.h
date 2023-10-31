@@ -25,13 +25,8 @@ protected:
 
   void update_transform() {
     m_local_transform = compute_local_transform();
-    
-    if (m_parent) {
-      m_world_transform = m_parent->get_world_transform() * m_local_transform;
-    } else {
-      m_world_transform = m_local_transform;
-    }
-    
+    m_world_transform = m_parent ? (m_parent->get_world_transform() * m_local_transform) : m_local_transform;
+        
     for (Transform* child : m_children) {
       child->update_transform();
     }
@@ -48,15 +43,6 @@ public:
   {
     update_transform();
   }  
-
-  Transform* get_root() const {
-    if (m_parent == nullptr) return nullptr;
-    Transform* root = m_parent;
-    while (root->get_parent() != nullptr) {
-      root = root->get_parent();  
-    }
-    return root;
-  }
 
   Transform* get_parent() const { return m_parent; }
 
