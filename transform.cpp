@@ -19,9 +19,9 @@ namespace gfx
   }
 
   Transform::Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, Transform *parent)
-        : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
+      : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
   {
-      update_transform();
+    update_transform();
   }
 
   Transform *Transform::get_parent() const
