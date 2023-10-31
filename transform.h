@@ -1,9 +1,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 
 namespace gfx {
+
 
 class Transform {
 protected:
@@ -19,7 +22,7 @@ protected:
     auto translate = glm::translate(glm::mat4(1.0f), m_local_position);
     auto scale = glm::scale(glm::mat4(1.0f), m_local_scale);
     auto rotation = glm::mat4(m_local_rotation);
-    return translation * rotation * scale;
+    return translate * rotation * scale;
   }
 
   void update_transform() {
@@ -41,13 +44,13 @@ public:
     update_transform();
   }
 
-  Transform(const glm::vec3& position, const glm:quat& rotation, const glm::vec3& scale, Transform* parent = nullptr)
+  Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent = nullptr)
     : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
   {
     update_transform();
   }  
 
-  Transform* get_root() const { return parent ? parent->get_root() : this; }
+  Transform* get_root() const { return (m_parent != nullptr) ? m_parent->get_root() : nullptr; }
 
   glm::vec3 get_local_position() const { return m_local_position; }
   glm::vec3 get_local_scale() const { return m_local_scale; }
@@ -69,7 +72,7 @@ public:
   }
 
   glm::vec3 get_world_position() const {
-    return glm::vec3(m_world_transform * glm::vec4(glm::vec3(0.0f), 1.0f))
+    return glm::vec3(m_world_transform * glm::vec4(glm::vec3(0.0f), 1.0f));
     //return { m_world_transform[][] };
   }
 
@@ -81,5 +84,6 @@ public:
   }
   
 };
+
 
 }
