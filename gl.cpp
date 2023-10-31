@@ -1,6 +1,22 @@
 #include "gl.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+
+
+std::string read_file_to_string(const std::string &path)
+{
+  std::ifstream file(path);
+  if (!file.is_open())
+  {
+    return std::string();
+  }
+
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  return buffer.str();
+}
 
 namespace gfx
 {
@@ -15,6 +31,11 @@ namespace gfx
       {
         printf("OpenGL error %d, at %s:%i - for %s\n", err, fname, line, stmt);
       }
+    }
+
+    Shader::Shader(const std::string &path)
+      : Shader(read_file_to_string(path + ".vert"), read_file_to_string(path + ".frag"))
+    {
     }
 
     Shader::Shader(const std::string &vertex_shader_source, const std::string &fragment_shader_source)

@@ -152,6 +152,7 @@ namespace gfx
 
     struct Shader : public Object
     {
+      Shader(const std::string& path);
       Shader(const std::string &vertex_shader_source, const std::string &fragment_shader_source);
       ~Shader();
       void bind() const;
