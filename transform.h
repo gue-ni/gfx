@@ -7,6 +7,15 @@
 #include <vector>
 
 namespace gfx {
+
+inline glm::vec3 transform(const glm::mat4& matrix, const glm::vec3& vector) {
+  return glm::vec3(matrix * glm::vec4(vector, 1.0f));
+}
+
+inline glm::vec3 inverse_transform(const glm::mat4& matrix, const glm::vec3& vector) {
+  return glm::vec3(glm::inverse(matrix) * glm::vec4(vector, 1.0f));
+}
+
 class Transform {
 protected:
   glm::vec3 m_local_position;
@@ -81,21 +90,31 @@ public:
   }
 
   glm::vec3 get_world_position() const { return glm::vec3(m_world_transform[3]); }
+  glm::quat get_world_rotation() const { return m_parent ? (m_parent->get_world_rotation() * m_local_rotation) : m_local_rotation; }
   glm::mat4 get_local_transform() const { return m_local_transform; }
   glm::mat4 get_world_transform() const { return m_world_transform; }
 
   void add_child(Transform* child) { m_children.push_back(child); }
 
   // rotation only
-  glm::vec3 transform_direction(const glm::vec& direction) const;
-  glm::vec3 inverse_transform_direction(const glm::vec& direction) const;
+  glm::vec3 transform_direction(const glm::vec& direction) const {
+    return transform(glm::mat4(get_world_rotation()), direction);
+  }
+  glm::vec3 inverse_transform_direction(const glm::vec& direction) const {
+    return inverse_transform(glm::mat4(get_world_rotation()), direction);
+  }
 
   // rotation and scale only
-  glm::vec3 transform_vector(const glm::vec& vector) const;
-  glm::vec3 inverse_transform_vector(const glm::vec& vector) const;
+  // glm::vec3 transform_vector(const glm::vec& vector) const;
+  // glm::vec3 inverse_transform_vector(const glm::vec& vector) const;
 
   // position, rotation and scale
-  glm::vec3 transform_point(const glm::vec& point) const;
-  glm::vec3 inverse_transform_point(const glm::vec& point) const;
+  glm::vec3 transform_point(const glm::vec& point) const {
+    return transform(get_world_transform(), point);
+  }
+
+  glm::vec3 inverse_transform_point(const glm::vec& point) const {
+    return inverse_transform(get_world_transform(), point);
+  }
 };
 }
