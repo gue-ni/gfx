@@ -60,6 +60,11 @@ public:
   glm::vec3 get_local_scale() const { return m_local_scale; }
   glm::quat get_local_rotation() const { return m_local_rotation; }
 
+  void look_at(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f))
+  {
+    assert(m_parent == nullptr); // we can not set the matrix directly if there is a parent
+  }
+
   void set_local_position(const glm::vec3& position) {
     m_local_position = position;
     update_transform();
