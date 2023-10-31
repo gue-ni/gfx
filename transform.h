@@ -6,8 +6,6 @@
 #include <vector>
 
 namespace gfx {
-
-
 class Transform {
 protected:
   glm::vec3 m_local_position = glm::vec3(0.0f);
@@ -19,9 +17,9 @@ protected:
   std::vector<Transform*> m_children;
 
   glm::mat4 compute_local_transform() const {  
-    auto translate = glm::translate(glm::mat4(1.0f), m_local_position);
-    auto scale = glm::scale(glm::mat4(1.0f), m_local_scale);
-    auto rotation = glm::mat4(m_local_rotation);
+    glm::mat4 translate = glm::translate(glm::mat4(1.0f), m_local_position);
+    glm::mat4 rotation = glm::mat4(m_local_rotation);
+    glm::mat4 scale = glm::scale(glm::mat4(1.0f), m_local_scale);
     return translate * rotation * scale;
   }
 
@@ -33,6 +31,7 @@ protected:
     } else {
       m_world_transform = m_local_transform;
     }
+    
     for (Transform* child : m_children) {
       child->update_transform();
     }
@@ -71,19 +70,12 @@ public:
     update_transform();
   }
 
-  glm::vec3 get_world_position() const {
-    return glm::vec3(m_world_transform * glm::vec4(glm::vec3(0.0f), 1.0f));
-    //return { m_world_transform[][] };
-  }
-
+  glm::vec3 get_world_position() const { return glm::vec3(m_world_transform[3]); }
   glm::mat4 get_local_transform() const { return m_local_transform; }
   glm::mat4 get_world_transform() const { return m_world_transform; }
 
   void add_child(Transform* child) {
     m_children.push_back(child);
   }
-  
 };
-
-
 }
