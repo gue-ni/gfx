@@ -8,6 +8,17 @@
 
 namespace gfx
 {
+  std::optional<Image> Image::open(const std::string& path, bool flip_vertically)
+  {
+    stbi_set_flip_vertically_on_load(flip_vertically);
+    int width, height, channels;
+    unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    if (data != nullptr) {
+      return std::optional{ Image(data, width, height, channels) };
+    } else {
+      return std::nullopt;
+    }
+  }
 
   Image::Image(const std::string &path, bool flip_vertically)
   {
