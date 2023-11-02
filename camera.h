@@ -13,6 +13,6 @@ namespace gfx
     Camera() : Transform() {}
     glm::mat4 get_view_matrix() const;
     glm::mat4 get_projection_matrix() const;
-    glm::mat4 set_projection_matrix(const glm::mat4& matrix);
+    void set_projection_matrix(const glm::mat4 &matrix);
   };
 }

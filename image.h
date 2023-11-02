@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <string>
+#include <optional>
 #include <glm/glm.hpp>
 
 namespace gfx

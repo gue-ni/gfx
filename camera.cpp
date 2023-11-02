@@ -11,4 +11,8 @@ namespace gfx
   {
     return m_projection;
   }
+  void Camera::set_projection_matrix(const glm::mat4 &matrix)
+  {
+    m_projection = matrix;
+  }
 }
