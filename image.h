@@ -28,7 +28,7 @@ namespace gfx
     Image(Image &&other) noexcept;
     Image &operator=(Image &&other) noexcept;
 
-    // static std::optional<Image> open(const std::string& path);
+    static std::optional<Image> open(const std::string& path, bool flip_vertically = false);
 
     unsigned char *data() const;
     int width() const;
