@@ -17,6 +17,9 @@ namespace gfx
       RGBA = GL_RGBA
     };
 
+    Image(unsigned char *data, int width, int height, int channels)
+      : m_data(data), m_width(width), m_height(height), m_channels(channels) {}
+
     Image(const std::string &path, bool flip_vertically = false);
     ~Image();
 
@@ -24,6 +27,8 @@ namespace gfx
     Image &operator=(const Image &other) = delete;
     Image(Image &&other) noexcept;
     Image &operator=(Image &&other) noexcept;
+
+    // static std::optional<Image> open(const std::string& path);
 
     unsigned char *data() const;
     int width() const;
