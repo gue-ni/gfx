@@ -2,18 +2,17 @@
 
 #include "transform.h"
 
-namespace gfx {
-class Camera : public Transform {
-protected:
-    glm::mat4 m_projection;
+namespace gfx
+{
+class Camera : public Transform
+{
+ protected:
+  glm::mat4 m_projection{};
 
-public:
-    Camera()
-        : Transform()
-    {
-    }
-    glm::mat4 get_view_matrix() const;
-    glm::mat4 get_projection_matrix() const;
-    void set_projection_matrix(const glm::mat4& matrix);
+ public:
+  Camera() : Transform() {}
+  glm::mat4 get_view_matrix() const;
+  glm::mat4 get_projection_matrix() const;
+  void set_projection_matrix(const glm::mat4& matrix);
 };
-}
+}  // namespace gfx
