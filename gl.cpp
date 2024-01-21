@@ -193,6 +193,13 @@ void Texture::set_parameter(GLenum pname, GLfloat param) { glTexParameterf(targe
 
 void Texture::set_parameter(GLenum pname, const GLfloat* param) { glTexParameterfv(target, pname, param); }
 
+void Texture::set_image(const Image& image)
+{
+  glTexImage2D(target, 0, image.format(), image.width(), image.height(), 0, image.format(), GL_UNSIGNED_BYTE,
+               image.data());
+  glGenerateMipmap(target);
+}
+
 std::unique_ptr<Texture> Texture::load(const std::string& path, const Params& params)
 {
   Image image;

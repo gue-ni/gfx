@@ -173,6 +173,7 @@ struct Texture : public Object {
   void set_parameter(GLenum pname, GLint param);
   void set_parameter(GLenum pname, GLfloat param);
   void set_parameter(GLenum pname, const GLfloat* param);
+  void set_image(const Image& image);
   static std::unique_ptr<Texture> load(const std::string& path, const Params& params);
   static std::unique_ptr<Texture> load(const std::string& path);
 };
