@@ -66,5 +66,9 @@ class Transform
   // position, rotation and scale
   glm::vec3 transform_point(const glm::vec3 &point) const;
   glm::vec3 inverse_transform_point(const glm::vec3 &point) const;
+
+  glm::vec3 get_local_x_axis() const;
+  glm::vec3 get_local_y_axis() const;
+  glm::vec3 get_local_z_axis() const;
 };
 }  // namespace gfx

@@ -1,6 +1,7 @@
 
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
 #include <GL/glew.h>
 
 #include <glm/glm.hpp>
@@ -33,6 +34,7 @@ class Image
   int channels() const;
   Format format() const;
   void read(const std::string& path, bool flip_vertically = false);
+  bool write(const std::string& path);
   bool loaded() const { return m_data != nullptr; }
 
  private:

@@ -97,4 +97,10 @@ glm::vec3 Transform::inverse_transform_point(const glm::vec3& point) const
   return inverse_transform(get_world_transform(), point);
 }
 
+glm::vec3 Transform::get_local_x_axis() const { return transform_direction(glm::vec3(1.0f, 0.0f, 0.0f)); }
+
+glm::vec3 Transform::get_local_y_axis() const { return transform_direction(glm::vec3(0.0f, 1.0f, 0.0f)); }
+
+glm::vec3 Transform::get_local_z_axis() const { return transform_direction(glm::vec3(0.0f, 0.0f, 1.0f)); }
+
 }  // namespace gfx
