@@ -63,8 +63,7 @@ void Transform::set_local_transform(const glm::mat4& matrix)
   glm::decompose(matrix, scale, rotation, translation, skew, perspective);
 
   m_local_position = translation;
-  // https://stackoverflow.com/a/40024726/11009152
-  m_local_rotation = glm::conjugate(rotation);
+  m_local_rotation = rotation;
   m_local_scale = scale;
   update_transform();
 }

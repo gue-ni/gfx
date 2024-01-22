@@ -17,12 +17,6 @@ std::string read_file_to_string(const std::string& path)
   return buffer.str();
 }
 
-namespace gfx
-{
-
-namespace gl
-{
-
 void check_gl_error(const char* stmt, const char* fname, int line)
 {
   GLenum err = glGetError();
@@ -30,6 +24,12 @@ void check_gl_error(const char* stmt, const char* fname, int line)
     printf("OpenGL error %d, at %s:%i - for %s\n", err, fname, line, stmt);
   }
 }
+
+namespace gfx
+{
+
+namespace gl
+{
 
 ShaderProgram::ShaderProgram(const std::string& compute_shader_source)
 {
@@ -199,9 +199,7 @@ void Texture::set_image(const Image& image)
                image.data());
 }
 
-void Texture::generate_mipmap() {
-  glGenerateMipmap(target);
-}
+void Texture::generate_mipmap() { glGenerateMipmap(target); }
 
 std::unique_ptr<Texture> Texture::load(const std::string& path, const Params& params)
 {

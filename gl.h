@@ -25,13 +25,14 @@
 #define GL_CALL(stmt) stmt
 #endif
 
+void check_gl_error(const char* stmt, const char* fname, int line);
+
 namespace gfx
 {
 
 namespace gl
 {
 
-void check_gl_error(const char* stmt, const char* fname, int line);
 
 struct Vertex {
   glm::vec3 Position;
