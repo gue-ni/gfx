@@ -58,6 +58,11 @@ void Image::read(const std::string& path, bool flip_vertically)
   m_data = stbi_load(path.c_str(), &m_width, &m_height, &m_channels, 0);
 }
 
+void Image::read_from_buffer(const unsigned char* buffer, int len)
+{
+  m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &m_channels, 3);
+}
+
 bool Image::write(const std::string& path)
 {
   return stbi_write_png(path.c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;

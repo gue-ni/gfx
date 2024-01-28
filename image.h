@@ -34,6 +34,7 @@ class Image
   int channels() const;
   Format format() const;
   void read(const std::string& path, bool flip_vertically = false);
+  void read_from_buffer(const unsigned char* buffer, int len);
   bool write(const std::string& path);
   bool loaded() const { return m_data != nullptr; }
 
