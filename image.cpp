@@ -61,11 +61,19 @@ void Image::read(const std::string& path, bool flip_vertically)
 void Image::read_from_buffer(const unsigned char* buffer, int len)
 {
   m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &m_channels, 3);
+  m_channels = 3;
 }
 
 bool Image::write(const std::string& path)
 {
   return stbi_write_png(path.c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
+}
+
+glm::u8vec3 Image::pixel(int x, int y)
+{
+  assert(loaded());
+  int i = (y * m_width + x) * 3;
+  return glm::u8vec3(m_data[i + 0], m_data[i + 1], m_data[i + 2]);
 }
 
 }  // namespace gfx
