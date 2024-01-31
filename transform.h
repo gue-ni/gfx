@@ -38,20 +38,20 @@ class Transform
   Transform();
   Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, Transform *parent = nullptr);
 
-  Transform *get_parent() const;
-  glm::vec3 get_local_position() const;
-  glm::vec3 get_local_scale() const;
-  glm::quat get_local_rotation() const;
+  Transform *parent() const;
+  glm::vec3 local_position() const;
+  glm::vec3 local_scale() const;
+  glm::quat local_rotation() const;
 
   void set_local_position(const glm::vec3 &position);
   void set_local_scale(const glm::vec3 &scale);
   void set_local_rotation(const glm::quat &rotation);
   void set_local_transform(const glm::mat4 &matrix);
 
-  glm::vec3 get_world_position() const;
-  glm::quat get_world_rotation() const;
-  glm::mat4 get_local_transform() const;
-  glm::mat4 get_world_transform() const;
+  glm::vec3 world_position() const;
+  glm::quat world_rotation() const;
+  glm::mat4 local_transform() const;
+  glm::mat4 world_transform() const;
 
   void add_child(Transform *child) { m_children.push_back(child); }
 
@@ -67,8 +67,8 @@ class Transform
   glm::vec3 transform_point(const glm::vec3 &point) const;
   glm::vec3 inverse_transform_point(const glm::vec3 &point) const;
 
-  glm::vec3 get_local_x_axis() const;
-  glm::vec3 get_local_y_axis() const;
-  glm::vec3 get_local_z_axis() const;
+  glm::vec3 local_x_axis() const;
+  glm::vec3 local_y_axis() const;
+  glm::vec3 local_z_axis() const;
 };
 }  // namespace gfx

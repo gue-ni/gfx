@@ -5,7 +5,7 @@ namespace gfx
 void Transform::update_transform()
 {
   m_local_transform = compute_local_transform();
-  m_world_transform = m_parent ? (m_parent->get_world_transform() * m_local_transform) : m_local_transform;
+  m_world_transform = m_parent ? (m_parent->world_transform() * m_local_transform) : m_local_transform;
 
   for (Transform* child : m_children) {
     child->update_transform();
@@ -20,13 +20,13 @@ Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const
   update_transform();
 }
 
-Transform* Transform::get_parent() const { return m_parent; }
+Transform* Transform::parent() const { return m_parent; }
 
-glm::vec3 Transform::get_local_position() const { return m_local_position; }
+glm::vec3 Transform::local_position() const { return m_local_position; }
 
-glm::vec3 Transform::get_local_scale() const { return m_local_scale; }
+glm::vec3 Transform::local_scale() const { return m_local_scale; }
 
-glm::quat Transform::get_local_rotation() const { return m_local_rotation; }
+glm::quat Transform::local_rotation() const { return m_local_rotation; }
 
 glm::mat4 Transform::compute_local_transform() const
 {
@@ -68,38 +68,38 @@ void Transform::set_local_transform(const glm::mat4& matrix)
   update_transform();
 }
 
-glm::vec3 Transform::get_world_position() const { return glm::vec3(m_world_transform[3]); }
+glm::vec3 Transform::world_position() const { return glm::vec3(m_world_transform[3]); }
 
-glm::quat Transform::get_world_rotation() const
+glm::quat Transform::world_rotation() const
 {
-  return m_parent ? (m_parent->get_world_rotation() * m_local_rotation) : m_local_rotation;
+  return m_parent ? (m_parent->world_rotation() * m_local_rotation) : m_local_rotation;
 }
 
-glm::mat4 Transform::get_local_transform() const { return m_local_transform; }
+glm::mat4 Transform::local_transform() const { return m_local_transform; }
 
-glm::mat4 Transform::get_world_transform() const { return m_world_transform; }
+glm::mat4 Transform::world_transform() const { return m_world_transform; }
 
 glm::vec3 Transform::transform_direction(const glm::vec3& direction) const
 {
-  return transform(glm::mat4(get_world_rotation()), direction);
+  return transform(glm::mat4(world_rotation()), direction);
 }
 
 glm::vec3 Transform::inverse_transform_direction(const glm::vec3& direction) const
 {
-  return inverse_transform(glm::mat4(get_world_rotation()), direction);
+  return inverse_transform(glm::mat4(world_rotation()), direction);
 }
 
-glm::vec3 Transform::transform_point(const glm::vec3& point) const { return transform(get_world_transform(), point); }
+glm::vec3 Transform::transform_point(const glm::vec3& point) const { return transform(world_transform(), point); }
 
 glm::vec3 Transform::inverse_transform_point(const glm::vec3& point) const
 {
-  return inverse_transform(get_world_transform(), point);
+  return inverse_transform(world_transform(), point);
 }
 
-glm::vec3 Transform::get_local_x_axis() const { return transform_direction(glm::vec3(1.0f, 0.0f, 0.0f)); }
+glm::vec3 Transform::local_x_axis() const { return transform_direction(glm::vec3(1.0f, 0.0f, 0.0f)); }
 
-glm::vec3 Transform::get_local_y_axis() const { return transform_direction(glm::vec3(0.0f, 1.0f, 0.0f)); }
+glm::vec3 Transform::local_y_axis() const { return transform_direction(glm::vec3(0.0f, 1.0f, 0.0f)); }
 
-glm::vec3 Transform::get_local_z_axis() const { return transform_direction(glm::vec3(0.0f, 0.0f, 1.0f)); }
+glm::vec3 Transform::local_z_axis() const { return transform_direction(glm::vec3(0.0f, 0.0f, 1.0f)); }
 
 }  // namespace gfx

@@ -11,8 +11,8 @@ class Camera : public Transform
 
  public:
   Camera() : Transform() {}
-  glm::mat4 get_view_matrix() const;
-  glm::mat4 get_projection_matrix() const;
+  glm::mat4 view_matrix() const;
+  glm::mat4 projection_matrix() const;
   void set_projection_matrix(const glm::mat4& matrix);
 };
 }  // namespace gfx
