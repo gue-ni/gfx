@@ -64,7 +64,7 @@ void Image::read_from_buffer(const unsigned char* buffer, int len)
   m_channels = 3;
 }
 
-bool Image::write(const std::string& path)
+bool Image::write(const std::string& path) const
 {
   return stbi_write_png(path.c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
 }

@@ -35,7 +35,7 @@ class Image
   Format format() const;
   void read(const std::string& path, bool flip_vertically = false);
   void read_from_buffer(const unsigned char* buffer, int len);
-  bool write(const std::string& path);
+  bool write(const std::string& path) const;
   bool loaded() const { return m_data != nullptr; }
   glm::u8vec4 pixel(int x, int y) const;
   glm::u8vec4 sample(const glm::vec2&) const;
