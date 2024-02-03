@@ -37,7 +37,8 @@ class Image
   void read_from_buffer(const unsigned char* buffer, int len);
   bool write(const std::string& path);
   bool loaded() const { return m_data != nullptr; }
-  glm::u8vec3 pixel(int x, int y);
+  glm::u8vec4 pixel(int x, int y) const;
+  glm::u8vec4 sample(const glm::vec2&) const;
 
  private:
   unsigned char* m_data = nullptr;

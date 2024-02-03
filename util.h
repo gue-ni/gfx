@@ -13,6 +13,12 @@ constexpr glm::vec3 rgb(T r, T g, T b)
   return glm::vec3(static_cast<float>(r), static_cast<float>(g), static_cast<float>(b)) / 255.0f;
 }
 
+template <typename T>
+constexpr glm::vec3 rgba(T r, T g, T b, T a)
+{
+  return glm::vec4(static_cast<float>(r), static_cast<float>(g), static_cast<float>(b), static_cast<float>(a)) / 255.0f;
+}
+
 constexpr glm::vec3 rgb(uint32_t hex)
 {
   assert(hex <= 0xffffffU);

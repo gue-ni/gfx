@@ -69,11 +69,28 @@ bool Image::write(const std::string& path)
   return stbi_write_png(path.c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
 }
 
-glm::u8vec3 Image::pixel(int x, int y)
+glm::u8vec4 Image::pixel(int x, int y) const
 {
   assert(loaded());
+  assert(0 <= x && x <= m_width);
+  assert(0 <= y && y <= m_height);
+
   int i = (y * m_width + x) * 3;
-  return glm::u8vec3(m_data[i + 0], m_data[i + 1], m_data[i + 2]);
+  return glm::u8vec4(m_data[i + 0], m_data[i + 1], m_data[i + 2], 255U);
+}
+
+glm::u8vec4 Image::sample(const glm::vec2& uv) const
+{
+#if 1
+  // nearest
+  int x = static_cast<int>(uv.x * m_width);
+  int y = static_cast<int>(uv.y * m_height);
+  return pixel(x, y);
+#else
+  // bilinear interpolation
+  assert(false);
+  return glm::u8vec4();
+#endif
 }
 
 }  // namespace gfx
