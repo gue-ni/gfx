@@ -14,6 +14,7 @@ class Camera : public Transform
   Camera() : Transform() {}
   glm::mat4 view_matrix() const;
   glm::mat4 projection_matrix() const;
+  glm::mat4 view_projection_matrix() const;
   void set_projection_matrix(const glm::mat4& matrix);
   void set_projection_matrix(float fov, float aspect_ratio, float near, float far);
   float near() const;
