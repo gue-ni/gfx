@@ -39,6 +39,7 @@ add_library(gfx STATIC
 
 target_include_directories(gfx PUBLIC
   "."
+  "${SDL2_INCLUDE_DIR}"
   "${CMAKE_SOURCE_DIR}/build/_deps/glm-src"
   "${CMAKE_SOURCE_DIR}/build/_deps/glew-src/include"
 )
