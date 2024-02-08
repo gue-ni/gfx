@@ -2,16 +2,12 @@
 
 #include <GL/glew.h>
 
-#include <array>
-#include <span>
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/io.hpp>
-#include <map>
 #include <memory>
-#include <vector>
+#include <span>
 
 #include "image.h"
 
@@ -31,26 +27,6 @@ void check_gl_error(const char* stmt, const char* fname, int line);
 
 namespace gfx
 {
-
-// simple replacement for std::span, which is only available in c++20
-template <class T>
-class span
-{
- public:
-  span() : m_data(nullptr), m_size(0) {}
-  span(std::vector<T>& v) : m_data(v.data()), m_size(v.size()) {}
-  span(T* first, T* last) : m_data(first), m_size(last - first) {}
-  span(T* first, size_t count) : m_data(first), m_size(count) {}
-  T* data() const { return m_data; }
-  size_t size() const { return m_size; }
-  size_t size_bytes() const { return sizeof(T) * size(); }
-  T* begin() const { return m_data; }
-  T* end() const { return m_data + m_size; }
-
- private:
-  T* m_data;
-  size_t m_size;
-};
 
 namespace gl
 {
@@ -96,7 +72,7 @@ struct Buffer : public Object {
     buffer_data(data.data(), data.size_bytes(), usage);
   }
 
-  inline void buffer_data(const void* data, size_t size, GLenum usage = GL_STATIC_DRAW)
+  void buffer_data(const void* data, size_t size, GLenum usage = GL_STATIC_DRAW)
   {
     GL_CALL(glBufferData(target, size, data, usage));
   }
