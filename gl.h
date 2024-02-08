@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include <array>
+#include <span>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
@@ -37,10 +38,10 @@ class span
 {
  public:
   span() : m_data(nullptr), m_size(0) {}
-  explicit span(const std::vector<T>& v) : m_data(v.data()), m_size(v.size()) {}
-  explicit span(T* first, T* last) : m_data(first), m_size(last - first) {}
-  explicit span(T* first, size_t count) : m_data(first), m_size(count) {}
-  T* data() const { m_data; }
+  span(std::vector<T>& v) : m_data(v.data()), m_size(v.size()) {}
+  span(T* first, T* last) : m_data(first), m_size(last - first) {}
+  span(T* first, size_t count) : m_data(first), m_size(count) {}
+  T* data() const { return m_data; }
   size_t size() const { return m_size; }
   size_t size_bytes() const { return sizeof(T) * size(); }
   T* begin() const { return m_data; }
@@ -90,7 +91,7 @@ struct Buffer : public Object {
   void unbind() const { GL_CALL(glBindBuffer(target, 0)); }
 
   template <typename T>
-  void buffer_data(const gfx::span<T>& data, GLenum usage = GL_STATIC_DRAW)
+  void buffer_data(const std::span<T>& data, GLenum usage = GL_STATIC_DRAW)
   {
     buffer_data(data.data(), data.size_bytes(), usage);
   }
