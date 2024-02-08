@@ -41,6 +41,7 @@ target_include_directories(gfx PUBLIC
   "."
   "${glm_SOURCE_DIR}"
   "${sdl2_SOURCE_DIR}/include"
+  "${CMAKE_SOURCE_DIR}/build/_deps/sdl2-src/include"
   "${glew_SOURCE_DIR}/include"
 )
 target_link_libraries(gfx PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
