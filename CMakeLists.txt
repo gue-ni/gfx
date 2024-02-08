@@ -20,7 +20,7 @@ endif(WIN32)
 find_package(sdl2 REQUIRED)
 include_directories(${sdl2_SOURCE_DIR})
 
-find_package(glew REQUIRED)
+find_package(GLEW REQUIRED)
 include_directories(${glew_INCLUDE_DIR})
 
 find_package(OpenGL REQUIRED)
