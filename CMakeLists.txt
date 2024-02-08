@@ -2,26 +2,26 @@ cmake_minimum_required(VERSION 3.21)
 
 if(WIN32)
     FetchContent_Declare(
-        GLEW
+        glew
         URL https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip
     )
-    FetchContent_MakeAvailable(GLEW)
+    FetchContent_MakeAvailable(glew)
 
     FetchContent_Declare(
-        SDL2
+        sdl2
         URL https://github.com/libsdl-org/SDL/releases/download/release-2.26.4/SDL2-devel-2.26.4-VC.zip
     )
-    FetchContent_MakeAvailable(SDL2)
+    FetchContent_MakeAvailable(sdl2)
 
-    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_deps/sdl2-src")
-    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_deps/glew-src")
+    # list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_deps/sdl2-src")
+    # list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_deps/glew-src")
 endif(WIN32)
 
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
+find_package(sdl2 REQUIRED)
+include_directories(${sdl2_INCLUDE_DIR})
 
-find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIRS})
+find_package(glew REQUIRED)
+include_directories(${glew_INCLUDE_DIR})
 
 find_package(OpenGL REQUIRED)
 
@@ -39,9 +39,9 @@ add_library(gfx STATIC
 
 target_include_directories(gfx PUBLIC
   "."
-  "${SDL2_INCLUDE_DIRS}"
-  "${CMAKE_SOURCE_DIR}/build/_deps/glm-src"
-  "${CMAKE_SOURCE_DIR}/build/_deps/glew-src/include"
+  "${sdl2_SOURCE_DIR}"
+  "${glm_SOURCE_DIR}"
+  "${glew_SOURCE_DIR}"
 )
 target_link_libraries(gfx PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 
