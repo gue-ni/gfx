@@ -39,8 +39,8 @@ add_library(gfx STATIC
 
 target_include_directories(gfx PUBLIC
   "."
-  "${sdl2_SOURCE_DIR}"
   "${glm_SOURCE_DIR}"
+  "${sdl2_SOURCE_DIR}/include"
   "${glew_SOURCE_DIR}/include"
 )
 target_link_libraries(gfx PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
