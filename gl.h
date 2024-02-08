@@ -70,21 +70,7 @@ struct Buffer : public Object {
   void bind() const { GL_CALL(glBindBuffer(target, m_id)); }
   void unbind() const { GL_CALL(glBindBuffer(target, 0)); }
 
-  template <typename T>
-  void buffer_sub_data(size_t offset, const void* data, size_t size_bytes)
-  {
-    GL_CALL(glBufferSubData(offset, size_bytes, data));
-  }
-
-  void bind_buffer_range(GLuint index, size_t offset, size_t size)
-  {
-    GL_CALL(glBindBufferRange(target, index, m_id, offset, size));
-  }
-
-  void bind_buffer_base(GLuint index) { GL_CALL(glBindBufferBase(target, index, m_id)); }
-
-  template <typename T>
-  void buffer_data(const void* data, size_t size_bytes, GLenum usage = GL_STATIC_DRAW)
+  inline void buffer_data(const void* data, size_t size_bytes, GLenum usage = GL_STATIC_DRAW)
   {
     GL_CALL(glBufferData(target, size_bytes, data, usage));
   }
