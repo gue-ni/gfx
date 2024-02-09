@@ -13,8 +13,8 @@ if(WIN32)
     )
     FetchContent_MakeAvailable(sdl2)
 
-    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_deps/sdl2-src")
-    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/build/_deps/glew-src")
+    list(APPEND CMAKE_PREFIX_PATH "${sdl2_SOURCE_DIR}")
+    list(APPEND CMAKE_PREFIX_PATH "${glew_SOURCE_DIR}")
 endif(WIN32)
 
 find_package(sdl2 REQUIRED)
@@ -41,9 +41,9 @@ target_include_directories(gfx PUBLIC
   "."
   "${glm_SOURCE_DIR}"
   "${sdl2_SOURCE_DIR}/include"
-  "${CMAKE_SOURCE_DIR}/build/_deps/sdl2-src/include"
   "${glew_SOURCE_DIR}/include"
   "${SDL2_INCLUDE_DIRS}"
+  "${glew_INCLUDE_DIR}"
 )
 target_link_libraries(gfx PUBLIC ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 
