@@ -32,10 +32,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 add_library(gfx STATIC
-    gl.cpp
-    image.cpp
-    transform.cpp
-    camera.cpp
+    gfx.h
+    gl.cpp  gl.h
+    image.cpp image.h
+    transform.cpp transform.h
+    camera.cpp camera.h
+    util.h
 )
 
 target_include_directories(gfx PUBLIC
