@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/io.hpp>
 #include <memory>
-#include <span>
+#include <vector>
 
 #include "image.h"
 
@@ -67,9 +67,9 @@ struct Buffer : public Object {
   void unbind() const { GL_CALL(glBindBuffer(target, 0)); }
 
   template <typename T>
-  void buffer_data(const std::span<T>& data, GLenum usage = GL_STATIC_DRAW)
+  static size_t size_bytes(const std::vector<T>& data)
   {
-    buffer_data(data.data(), data.size_bytes(), usage);
+    return sizeof(T) * data.size();
   }
 
   void buffer_data(const void* data, size_t size, GLenum usage = GL_STATIC_DRAW)
