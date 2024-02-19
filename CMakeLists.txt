@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
 
+project(gfx LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+
 if(WIN32)
     FetchContent_Declare(
         glew
