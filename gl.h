@@ -142,6 +142,12 @@ struct ShaderProgram : public Object {
   void set_uniform(const std::string& name, const glm::mat4& value) const;
   void set_uniform_buffer(const std::string& name, GLuint binding = 0U);
   static std::string from_file(const std::string& path);
+  static std::unique_ptr<ShaderProgram> create_from_files(const std::string& vertex_shader_filename,
+                                                          const std::string& fragment_shader_filename);
+  static bool reload_from_files(std::unique_ptr<ShaderProgram>&& shader, const std::string& vertex_shader_filename,
+                                const std::string& fragment_shader_filename);
+
+
 };
 
 struct Texture : public Object {

@@ -99,6 +99,36 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader_source, const std:
   glDeleteShader(fragment_shader);
 }
 
+std::unique_ptr<ShaderProgram> ShaderProgram::create_from_files(const std::string& vertex_shader_filename,
+                                                                const std::string& fragment_shader_filename)
+{
+  const std::string vertex_shader_source = from_file(vertex_shader_filename);
+  if (vertex_shader_source.empty()) {
+    return nullptr;
+  }
+
+  const std::string fragment_shader_source = from_file(fragment_shader_filename);
+  if (fragment_shader_source.empty()) {
+    return nullptr;
+  }
+
+  return std::make_unique<ShaderProgram>(vertex_shader_source, fragment_shader_source);
+}
+
+bool ShaderProgram::reload_from_files(std::unique_ptr<ShaderProgram>&& shader,
+                                      const std::string& vertex_shader_filename,
+                                      const std::string& fragment_shader_filename)
+{
+  std::unique_ptr<ShaderProgram> new_shader = create_from_files(vertex_shader_filename, fragment_shader_filename);
+
+  if (new_shader) {
+    shader = std::move(new_shader);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 ShaderProgram::~ShaderProgram() { glDeleteProgram(m_id); }
 
 void ShaderProgram::bind() const { glUseProgram(m_id); }
