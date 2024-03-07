@@ -4,6 +4,8 @@ project(gfx LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include(FetchContent)
+
 if(WIN32)
     FetchContent_Declare(
         glew
