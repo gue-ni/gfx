@@ -12,7 +12,7 @@ void Transform::update_transform()
   }
 }
 
-Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f)) {}
+Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f)) { update_transform(); }
 
 Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent)
     : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
@@ -36,6 +36,17 @@ glm::mat4 Transform::compute_local_transform() const
   return translate * rotation * scale;
 }
 
+void Transform::set_parent(Transform* parent) { m_parent = parent;
+  update_transform();
+}
+
+void Transform::add_child(Transform* child)
+{
+  assert(child->parent() == nullptr);
+  child->set_parent(this);
+  m_children.push_back(child);
+}
+
 void Transform::set_local_scale(const glm::vec3& scale)
 {
   m_local_scale = scale;
@@ -45,6 +56,12 @@ void Transform::set_local_scale(const glm::vec3& scale)
 void Transform::set_local_rotation(const glm::quat& rotation)
 {
   m_local_rotation = rotation;
+  update_transform();
+}
+
+void Transform::set_local_rotation(const glm::vec3& rotation)
+{
+  m_local_rotation = glm::quat(rotation);
   update_transform();
 }
 

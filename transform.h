@@ -44,17 +44,18 @@ class Transform
   glm::vec3 local_scale() const;
   glm::quat local_rotation() const;
 
+  void add_child(Transform *child);
+  void set_parent(Transform *parent);
   void set_local_position(const glm::vec3 &position);
   void set_local_scale(const glm::vec3 &scale);
   void set_local_rotation(const glm::quat &rotation);
+  void set_local_rotation(const glm::vec3 &rotation);
   void set_local_transform(const glm::mat4 &matrix);
 
   glm::vec3 world_position() const;
   glm::quat world_rotation() const;
   glm::mat4 local_transform() const;
   glm::mat4 world_transform() const;
-
-  void add_child(Transform *child) { m_children.push_back(child); }
 
   // rotation only
   glm::vec3 transform_direction(const glm::vec3 &direction) const;
