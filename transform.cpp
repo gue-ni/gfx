@@ -22,6 +22,8 @@ Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const
 
 Transform* Transform::parent() const { return m_parent; }
 
+std::vector<Transform*> Transform::children() const { return m_children; }
+
 glm::vec3 Transform::local_position() const { return m_local_position; }
 
 glm::vec3 Transform::local_scale() const { return m_local_scale; }
@@ -36,7 +38,9 @@ glm::mat4 Transform::compute_local_transform() const
   return translate * rotation * scale;
 }
 
-void Transform::set_parent(Transform* parent) { m_parent = parent;
+void Transform::set_parent(Transform* parent)
+{
+  m_parent = parent;
   update_transform();
 }
 
