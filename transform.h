@@ -43,10 +43,11 @@ class Transform
   Transform();
   Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, Transform *parent = nullptr);
 
-  Drawable *render_info = nullptr;
+  Drawable *drawable = nullptr;
 
   Transform *parent() const;
   std::vector<Transform *> children() const;
+
   glm::vec3 local_position() const;
   glm::vec3 local_scale() const;
   glm::quat local_rotation() const;
