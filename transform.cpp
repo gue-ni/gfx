@@ -123,4 +123,13 @@ glm::vec3 Transform::local_y_axis() const { return transform_direction(glm::vec3
 
 glm::vec3 Transform::local_z_axis() const { return transform_direction(glm::vec3(0.0f, 0.0f, 1.0f)); }
 
+void Transform::visit(std::function<void(const Transform*)> visitor) const
+{
+  visitor(this);
+
+  for (const Transform* child : children()) {
+    child->visit(visitor);
+  }
+}
+
 }  // namespace gfx
