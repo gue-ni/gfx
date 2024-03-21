@@ -81,6 +81,6 @@ class Transform
   glm::vec3 local_y_axis() const;
   glm::vec3 local_z_axis() const;
 
-  void visit(std::function<void(const Transform *)> visitor) const;
+  void visit(std::function<void(Transform *)> visitor) ;
 };
 }  // namespace gfx

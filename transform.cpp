@@ -123,11 +123,11 @@ glm::vec3 Transform::local_y_axis() const { return transform_direction(glm::vec3
 
 glm::vec3 Transform::local_z_axis() const { return transform_direction(glm::vec3(0.0f, 0.0f, 1.0f)); }
 
-void Transform::visit(std::function<void(const Transform*)> visitor) const
+void Transform::visit(std::function<void(Transform*)> visitor) 
 {
   visitor(this);
 
-  for (const Transform* child : children()) {
+  for (Transform* child : children()) {
     child->visit(visitor);
   }
 }
