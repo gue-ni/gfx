@@ -241,5 +241,27 @@ std::unique_ptr<Texture> Texture::load(const std::string& path, const Params& pa
 
 std::unique_ptr<Texture> Texture::load(const std::string& path) { return Texture::load(path, {}); }
 
+std::unique_ptr<CubemapTexture> CubemapTexture::load(const std::vector<std::string>& paths)
+{
+  auto texture = std::make_unique<CubemapTexture>();
+
+  texture->bind();
+
+  for (int i = 0; i < 6; i++) {
+    Image image;
+    image.read(paths[i]);
+
+    if (!image.loaded()) {
+      std::cerr << "Failed to load " << paths[i] << std::endl;
+      return nullptr;
+    }
+
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, image.format(), image.width(), image.height(), 0,
+                 image.format(), GL_UNSIGNED_BYTE, image.data());
+  }
+
+  return texture;
+}
+
 }  // namespace gl
 }  // namespace gfx

@@ -146,8 +146,6 @@ struct ShaderProgram : public Object {
                                                           const std::string& fragment_shader_filename);
   static bool reload_from_files(std::unique_ptr<ShaderProgram>&& shader, const std::string& vertex_shader_filename,
                                 const std::string& fragment_shader_filename);
-
-
 };
 
 struct Texture : public Object {
@@ -174,5 +172,11 @@ struct Texture : public Object {
   static std::unique_ptr<Texture> load(const std::string& path, const Params& params);
   static std::unique_ptr<Texture> load(const std::string& path);
 };
+
+struct CubemapTexture : public Texture {
+  CubemapTexture() : Texture(GL_TEXTURE_CUBE_MAP) {}
+  static std::unique_ptr<CubemapTexture> load(const std::vector<std::string>& paths);
+};
+
 }  // namespace gl
 }  // namespace gfx
