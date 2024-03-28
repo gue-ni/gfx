@@ -8,15 +8,15 @@ glm::mat4 Camera::projection_matrix() const { return m_projection; }
 
 glm::mat4 Camera::view_projection_matrix() const { return projection_matrix() * view_matrix(); }
 
-float Camera::far() const { return m_far; }
+float PerspectiveCamera::far() const { return m_far; }
 
-float Camera::near() const { return m_near; }
+float PerspectiveCamera::near() const { return m_near; }
 
-float Camera::aspect_ratio() const { return m_aspect_ratio; }
+float PerspectiveCamera::aspect_ratio() const { return m_aspect_ratio; }
 
-float Camera::fov() const { return m_fov; }
+float PerspectiveCamera::fov() const { return m_fov; }
 
-void Camera::set_attributes(float fov, float aspect_ratio, float near, float far)
+void PerspectiveCamera::set_attributes(float fov, float aspect_ratio, float near, float far)
 {
   m_fov = fov;
   m_aspect_ratio = aspect_ratio;
@@ -25,12 +25,15 @@ void Camera::set_attributes(float fov, float aspect_ratio, float near, float far
   compute_projection_matrix();
 }
 
-void Camera::set_aspect_ratio(float aspect_ratio)
+void PerspectiveCamera::set_aspect_ratio(float aspect_ratio)
 {
   m_aspect_ratio = aspect_ratio;
   compute_projection_matrix();
 }
 
-void Camera::compute_projection_matrix() { m_projection = glm::perspective(m_fov, m_aspect_ratio, m_near, m_far); }
+void PerspectiveCamera::compute_projection_matrix()
+{
+  m_projection = glm::perspective(m_fov, m_aspect_ratio, m_near, m_far);
+}
 
 }  // namespace gfx
