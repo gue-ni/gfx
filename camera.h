@@ -43,8 +43,11 @@ class OrthoCamera : public Camera
 {
  public:
   OrthoCamera();
+  OrthoCamera(float left, float right, float bottom, float top, float near, float far);
 
  private:
+  float m_left, m_right, m_bottom, m_top, m_near, m_far;
+  void compute_projection_matrix();
 };
 
 }  // namespace gfx
