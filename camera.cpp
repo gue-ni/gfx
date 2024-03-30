@@ -8,9 +8,28 @@ glm::mat4 Camera::projection_matrix() const { return m_projection; }
 
 glm::mat4 Camera::view_projection_matrix() const { return projection_matrix() * view_matrix(); }
 
-float PerspectiveCamera::far() const { return m_far; }
+float Camera::near() const { return m_near; }
+float Camera::far() const { return m_far; }
 
-float PerspectiveCamera::near() const { return m_near; }
+void Camera::set_near(float near)
+{
+  m_near = near;
+  compute_projection_matrix();
+}
+
+void Camera::set_far(float far)
+{
+  m_far = far;
+  compute_projection_matrix();
+}
+
+PerspectiveCamera::PerspectiveCamera() : PerspectiveCamera(glm::radians(45.0f), 16.0f / 9.0f, 1.0f, 1000.0f) {}
+
+PerspectiveCamera::PerspectiveCamera(float fov, float aspect_ratio, float near, float far)
+    : Camera(near, far), m_fov(fov), m_aspect_ratio(aspect_ratio)
+{
+  compute_projection_matrix();
+}
 
 float PerspectiveCamera::aspect_ratio() const { return m_aspect_ratio; }
 
@@ -39,7 +58,7 @@ void PerspectiveCamera::compute_projection_matrix()
 OrthoCamera::OrthoCamera() : OrthoCamera(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f) {}
 
 OrthoCamera::OrthoCamera(float left, float right, float bottom, float top, float near, float far)
-    : m_left(left), m_right(right), m_bottom(bottom), m_top(top), m_near(near), m_far(far)
+    : Camera(near, far), m_left(left), m_right(right), m_bottom(bottom), m_top(top)
 {
 }
 
