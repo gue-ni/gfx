@@ -9,6 +9,7 @@ glm::mat4 Camera::projection_matrix() const { return m_projection; }
 glm::mat4 Camera::view_projection_matrix() const { return projection_matrix() * view_matrix(); }
 
 float Camera::near() const { return m_near; }
+
 float Camera::far() const { return m_far; }
 
 void Camera::set_near(float near)
