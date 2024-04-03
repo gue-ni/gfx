@@ -24,7 +24,7 @@ void Camera::set_far(float far)
   compute_projection_matrix();
 }
 
-PerspectiveCamera::PerspectiveCamera() : PerspectiveCamera(glm::radians(45.0f), 16.0f / 9.0f, 1.0f, 1000.0f) {}
+PerspectiveCamera::PerspectiveCamera() : PerspectiveCamera(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 1000.0f) {}
 
 PerspectiveCamera::PerspectiveCamera(float fov, float aspect_ratio, float near, float far)
     : Camera(near, far), m_fov(fov), m_aspect_ratio(aspect_ratio)
@@ -56,16 +56,49 @@ void PerspectiveCamera::compute_projection_matrix()
   m_projection = glm::perspective(m_fov, m_aspect_ratio, m_near, m_far);
 }
 
-OrthoCamera::OrthoCamera() : OrthoCamera(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 100.0f) {}
+OrthoCamera::OrthoCamera() : OrthoCamera(-2.0f, 2.0f, -2.0f, 2.0f, 0.1f, 1000.0f) {}
 
 OrthoCamera::OrthoCamera(float left, float right, float bottom, float top, float near, float far)
     : Camera(near, far), m_left(left), m_right(right), m_bottom(bottom), m_top(top)
 {
+  compute_projection_matrix();
 }
 
 void OrthoCamera::compute_projection_matrix()
 {
   m_projection = glm::ortho(m_left, m_right, m_bottom, m_top, m_near, m_far);
+}
+
+float OrthoCamera::left() const { return m_left; }
+
+float OrthoCamera::right() const { return m_right; }
+
+float OrthoCamera::top() const { return m_top; }
+
+float OrthoCamera::bottom() const { return m_bottom; }
+
+void OrthoCamera::set_left(float v)
+{
+  m_left = v;
+  compute_projection_matrix();
+}
+
+void OrthoCamera::set_right(float v)
+{
+  m_right = v;
+  compute_projection_matrix();
+}
+
+void OrthoCamera::set_top(float v)
+{
+  m_top = v;
+  compute_projection_matrix();
+}
+
+void OrthoCamera::set_bottom(float v)
+{
+  m_bottom = v;
+  compute_projection_matrix();
 }
 
 }  // namespace gfx

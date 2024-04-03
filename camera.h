@@ -11,7 +11,7 @@ class Camera : public Transform
   glm::mat4 m_projection{};
   Camera() : m_near(0.0f), m_far(1000.0f) {}
   Camera(float near, float far) : m_near(near), m_far(far) {}
-  virtual void compute_projection_matrix() {}
+  virtual void compute_projection_matrix() = 0;
 
  public:
   virtual void set_aspect_ratio(float aspect_ratio) {}
@@ -44,9 +44,18 @@ class OrthoCamera : public Camera
  public:
   OrthoCamera();
   OrthoCamera(float left, float right, float bottom, float top, float near, float far);
+  float left() const;
+  float right() const;
+  float top() const;
+  float bottom() const;
+  void set_left(float v);
+  void set_right(float v);
+  void set_top(float v);
+  void set_bottom(float v);
 
  private:
   float m_left, m_right, m_bottom, m_top;
+
   void compute_projection_matrix() override;
 };
 
