@@ -60,6 +60,8 @@ class Transform
   void set_local_rotation(const glm::vec3 &rotation);
   void set_local_transform(const glm::mat4 &matrix);
 
+  void look_at(const glm::vec3 &position, const glm::vec3 &target, const glm::vec3 &up);
+
   glm::vec3 world_position() const;
   glm::quat world_rotation() const;
   glm::mat4 local_transform() const;
@@ -81,6 +83,6 @@ class Transform
   glm::vec3 local_y_axis() const;
   glm::vec3 local_z_axis() const;
 
-  void visit(std::function<void(Transform *)> visitor) ;
+  void visit(std::function<void(Transform *)> visitor);
 };
 }  // namespace gfx

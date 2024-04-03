@@ -89,6 +89,11 @@ void Transform::set_local_transform(const glm::mat4& matrix)
   update_transform();
 }
 
+void Transform::look_at(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up)
+{
+  set_local_transform(glm::inverse(glm::lookAt(position, target, up)));
+}
+
 glm::vec3 Transform::world_position() const { return glm::vec3(m_world_transform[3]); }
 
 glm::quat Transform::world_rotation() const
@@ -123,7 +128,7 @@ glm::vec3 Transform::local_y_axis() const { return transform_direction(glm::vec3
 
 glm::vec3 Transform::local_z_axis() const { return transform_direction(glm::vec3(0.0f, 0.0f, 1.0f)); }
 
-void Transform::visit(std::function<void(Transform*)> visitor) 
+void Transform::visit(std::function<void(Transform*)> visitor)
 {
   visitor(this);
 
