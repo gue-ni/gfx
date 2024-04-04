@@ -5,6 +5,10 @@
 #include <regex>
 #include <sstream>
 
+#define STB_INCLUDE_LINE_NONE
+#define STB_INCLUDE_IMPLEMENTATION
+#include "stb_include.h"
+
 std::string read_file_to_string(const std::string& path)
 {
   std::ifstream file(path);
@@ -48,24 +52,23 @@ void ShaderProgram::load()
     return;
   }
 
-  const std::string vertex_shader_source = from_file(m_vertex_shader_path);
-  const std::string fragment_shader_source = from_file(m_fragment_shader_path);
+  char* vertex_shader_source = read_from_file_and_handle_includes(m_vertex_shader_path);
+  char* fragment_shader_source = read_from_file_and_handle_includes(m_fragment_shader_path);
 
-  if (vertex_shader_source.empty() || fragment_shader_source.empty()) {
+  if (!(vertex_shader_source && fragment_shader_source)) {
     return;
   }
 
-  GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, vertex_shader_source.c_str());
-  GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragment_shader_source.c_str());
+  GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, vertex_shader_source);
+  GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
+
   GLuint id = create_program(vertex_shader, fragment_shader);
 
-  if (id != 0) {
-#if 0
-    if (m_id != 0) {
-      glDeleteProgram(m_id);
-    }
-#endif
+  free(vertex_shader_source);
+  free(fragment_shader_source);
 
+  if (id != 0) {
+    if (m_id != 0) glDeleteProgram(m_id);
     m_id = id;
   }
 }
@@ -82,6 +85,7 @@ GLuint ShaderProgram::create_shader(GLenum shader_type, const char* source)
   if (!loaded) {
     glGetShaderInfoLog(shader, 512, NULL, log);
     std::cerr << "Error: " << log;
+    std::cerr << source << std::endl;
     shader = 0;
   }
 
@@ -152,6 +156,30 @@ void ShaderProgram::set_uniform(const std::string& name, const glm::mat3& value)
 void ShaderProgram::set_uniform(const std::string& name, const glm::mat4& value) const
 {
   glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+}
+
+char* ShaderProgram::read_from_file_and_handle_includes(const std::string& path)
+{
+  std::string filename = path;
+  std::string directory = "";
+
+  size_t last_slash_pos = path.find_last_of('/');
+
+  if (last_slash_pos != std::string::npos) {
+    directory = path.substr(0, last_slash_pos);
+    filename = path.substr(last_slash_pos + 1);
+  }
+
+  char error[512] = "";
+  char* src = stb_include_file(path.c_str(), "", directory.data(), error);
+
+  std::string error_string = std::string(error);
+
+  if (!error_string.empty()) {
+    std::cerr << error << std::endl;
+  }
+
+  return src;
 }
 
 std::string ShaderProgram::from_file(const std::string& path)

@@ -143,6 +143,7 @@ class ShaderProgram : public Object
   void set_uniform(const std::string& name, const glm::mat3& value) const;
   void set_uniform(const std::string& name, const glm::mat4& value) const;
   static std::string from_file(const std::string& path);
+  static char* read_from_file_and_handle_includes(const std::string& path);
 
  private:
   std::string m_vertex_shader_path, m_fragment_shader_path;
