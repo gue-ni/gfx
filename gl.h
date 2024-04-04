@@ -119,7 +119,9 @@ struct RenderBuffer : public Object {
   void unbind() const { glBindRenderbuffer(GL_RENDERBUFFER, 0); }
 };
 
-struct ShaderProgram : public Object {
+class ShaderProgram : public Object
+{
+ public:
   enum ShaderType {
     Vertex = GL_VERTEX_SHADER,
     Fragment = GL_VERTEX_SHADER,
@@ -127,11 +129,11 @@ struct ShaderProgram : public Object {
     Geometry = GL_GEOMETRY_SHADER,
   };
 
-  ShaderProgram(const std::string& compute_shader_source);
-  ShaderProgram(const std::string& vertex_shader_source, const std::string& fragment_shader_source);
+  ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
   ~ShaderProgram();
   void bind() const;
   void unbind() const;
+  void load();
   void set_uniform(const std::string& name, GLint value) const;
   void set_uniform(const std::string& name, GLuint value) const;
   void set_uniform(const std::string& name, GLfloat value) const;
@@ -140,12 +142,12 @@ struct ShaderProgram : public Object {
   void set_uniform(const std::string& name, const glm::vec4& value) const;
   void set_uniform(const std::string& name, const glm::mat3& value) const;
   void set_uniform(const std::string& name, const glm::mat4& value) const;
-  void set_uniform_buffer(const std::string& name, GLuint binding = 0U);
   static std::string from_file(const std::string& path);
-  static std::unique_ptr<ShaderProgram> create_from_files(const std::string& vertex_shader_filename,
-                                                          const std::string& fragment_shader_filename);
-  static bool reload_from_files(std::unique_ptr<ShaderProgram>&& shader, const std::string& vertex_shader_filename,
-                                const std::string& fragment_shader_filename);
+
+ private:
+  std::string m_vertex_shader_path, m_fragment_shader_path;
+  GLuint create_shader(GLenum shader_type, const char* source);
+  GLuint create_program(GLuint s0, GLuint s1);
 };
 
 struct Texture : public Object {

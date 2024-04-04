@@ -30,103 +30,10 @@ namespace gfx
 
 namespace gl
 {
-
-ShaderProgram::ShaderProgram(const std::string& compute_shader_source)
+ShaderProgram::ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
+    : m_vertex_shader_path(vertex_shader_path), m_fragment_shader_path(fragment_shader_path)
 {
-  int loaded;
-  char log[512];
-
-  const char* shader_source_str = compute_shader_source.c_str();
-
-  GLuint compute_shader = glCreateShader(GL_COMPUTE_SHADER);
-  glShaderSource(compute_shader, 1, &shader_source_str, NULL);
-  glCompileShader(compute_shader);
-  glGetShaderiv(compute_shader, GL_COMPILE_STATUS, &loaded);
-  if (!loaded) {
-    glGetShaderInfoLog(compute_shader, 512, NULL, log);
-    std::cerr << "Error: " << log;
-  }
-
-  m_id = glCreateProgram();
-  glAttachShader(m_id, compute_shader);
-  glLinkProgram(m_id);
-  glGetProgramiv(m_id, GL_LINK_STATUS, &loaded);
-  if (!loaded) {
-    glGetProgramInfoLog(m_id, 512, NULL, log);
-    std::cerr << "Error: " << log;
-  }
-
-  glDeleteShader(compute_shader);
-}
-
-ShaderProgram::ShaderProgram(const std::string& vertex_shader_source, const std::string& fragment_shader_source)
-{
-  int loaded;
-  char log[512];
-
-  const char* vertex_shader_source_str = vertex_shader_source.c_str();
-
-  GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertex_shader, 1, &vertex_shader_source_str, NULL);
-  glCompileShader(vertex_shader);
-  glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &loaded);
-  if (!loaded) {
-    glGetShaderInfoLog(vertex_shader, 512, NULL, log);
-    std::cerr << "Error: " << log;
-  }
-
-  const char* fragment_shader_source_str = fragment_shader_source.c_str();
-  GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragment_shader, 1, &fragment_shader_source_str, NULL);
-  glCompileShader(fragment_shader);
-  glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &loaded);
-  if (!loaded) {
-    glGetShaderInfoLog(fragment_shader, 512, NULL, log);
-    std::cerr << "Error: " << log;
-  }
-
-  m_id = glCreateProgram();
-  glAttachShader(m_id, vertex_shader);
-  glAttachShader(m_id, fragment_shader);
-  glLinkProgram(m_id);
-  glGetProgramiv(m_id, GL_LINK_STATUS, &loaded);
-  if (!loaded) {
-    glGetProgramInfoLog(m_id, 512, NULL, log);
-    std::cerr << "Error: " << log;
-  }
-
-  glDeleteShader(vertex_shader);
-  glDeleteShader(fragment_shader);
-}
-
-std::unique_ptr<ShaderProgram> ShaderProgram::create_from_files(const std::string& vertex_shader_filename,
-                                                                const std::string& fragment_shader_filename)
-{
-  const std::string vertex_shader_source = from_file(vertex_shader_filename);
-  if (vertex_shader_source.empty()) {
-    return nullptr;
-  }
-
-  const std::string fragment_shader_source = from_file(fragment_shader_filename);
-  if (fragment_shader_source.empty()) {
-    return nullptr;
-  }
-
-  return std::make_unique<ShaderProgram>(vertex_shader_source, fragment_shader_source);
-}
-
-bool ShaderProgram::reload_from_files(std::unique_ptr<ShaderProgram>&& shader,
-                                      const std::string& vertex_shader_filename,
-                                      const std::string& fragment_shader_filename)
-{
-  std::unique_ptr<ShaderProgram> new_shader = create_from_files(vertex_shader_filename, fragment_shader_filename);
-
-  if (new_shader) {
-    shader = std::move(new_shader);
-    return true;
-  } else {
-    return false;
-  }
+  load();
 }
 
 ShaderProgram::~ShaderProgram() { glDeleteProgram(m_id); }
@@ -134,6 +41,78 @@ ShaderProgram::~ShaderProgram() { glDeleteProgram(m_id); }
 void ShaderProgram::bind() const { glUseProgram(m_id); }
 
 void ShaderProgram::unbind() const { glUseProgram(0); }
+
+void ShaderProgram::load()
+{
+  if (m_vertex_shader_path.empty() || m_fragment_shader_path.empty()) {
+    return;
+  }
+
+  const std::string vertex_shader_source = from_file(m_vertex_shader_path);
+  const std::string fragment_shader_source = from_file(m_fragment_shader_path);
+
+  if (vertex_shader_source.empty() || fragment_shader_source.empty()) {
+    return;
+  }
+
+  GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, vertex_shader_source.c_str());
+  GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragment_shader_source.c_str());
+  GLuint id = create_program(vertex_shader, fragment_shader);
+
+  if (id != 0) {
+#if 0
+    if (m_id != 0) {
+      glDeleteProgram(m_id);
+    }
+#endif
+
+    m_id = id;
+  }
+}
+
+GLuint ShaderProgram::create_shader(GLenum shader_type, const char* source)
+{
+  int loaded;
+  char log[512];
+
+  GLuint shader = glCreateShader(shader_type);
+  glShaderSource(shader, 1, &source, NULL);
+  glCompileShader(shader);
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &loaded);
+  if (!loaded) {
+    glGetShaderInfoLog(shader, 512, NULL, log);
+    std::cerr << "Error: " << log;
+    shader = 0;
+  }
+
+  return shader;
+}
+
+GLuint ShaderProgram::create_program(GLuint s0, GLuint s1)
+{
+  if (s0 == 0 || s1 == 0) {
+    return 0;
+  }
+
+  int loaded;
+  char log[512];
+
+  GLuint id = glCreateProgram();
+  glAttachShader(id, s0);
+  glAttachShader(id, s1);
+  glLinkProgram(id);
+  glGetProgramiv(id, GL_LINK_STATUS, &loaded);
+  if (!loaded) {
+    glGetProgramInfoLog(m_id, 512, NULL, log);
+    std::cerr << "Error: " << log;
+    id = 0;
+  }
+
+  glDeleteShader(s0);
+  glDeleteShader(s1);
+
+  return id;
+}
 
 void ShaderProgram::set_uniform(const std::string& name, GLint value) const
 {
@@ -175,16 +154,11 @@ void ShaderProgram::set_uniform(const std::string& name, const glm::mat4& value)
   glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void ShaderProgram::set_uniform_buffer(const std::string& name, GLuint binding)
-{
-  GLuint index = glGetUniformBlockIndex(m_id, name.c_str());
-  glUniformBlockBinding(m_id, index, binding);
-}
-
 std::string ShaderProgram::from_file(const std::string& path)
 {
   std::ifstream file(path);
   if (!file.is_open()) {
+    std::cerr << "Failed to open " << path << std::endl;
     return std::string();
   }
 
