@@ -9,18 +9,6 @@
 #define STB_INCLUDE_IMPLEMENTATION
 #include "stb_include.h"
 
-std::string read_file_to_string(const std::string& path)
-{
-  std::ifstream file(path);
-  if (!file.is_open()) {
-    return std::string();
-  }
-
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  return buffer.str();
-}
-
 void check_gl_error(const char* stmt, const char* fname, int line)
 {
   GLenum err = glGetError();
@@ -84,7 +72,7 @@ GLuint ShaderProgram::create_shader(GLenum shader_type, const char* source)
   glGetShaderiv(shader, GL_COMPILE_STATUS, &loaded);
   if (!loaded) {
     glGetShaderInfoLog(shader, 512, NULL, log);
-    std::cerr << "Error: " << log;
+    std::cerr << "Error:\n" << log;
     std::cerr << source << std::endl;
     shader = 0;
   }
@@ -108,7 +96,7 @@ GLuint ShaderProgram::create_program(GLuint s0, GLuint s1)
   glGetProgramiv(id, GL_LINK_STATUS, &loaded);
   if (!loaded) {
     glGetProgramInfoLog(m_id, 512, NULL, log);
-    std::cerr << "Error: " << log;
+    std::cerr << "Error:\n" << log;
     id = 0;
   }
 

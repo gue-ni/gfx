@@ -8,11 +8,12 @@ void Transform::update_transform()
   m_world_transform = m_parent ? (m_parent->world_transform() * m_local_transform) : m_local_transform;
 
   for (Transform* child : m_children) {
+    assert(child != nullptr);
     child->update_transform();
   }
 }
 
-Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f)) { update_transform(); }
+Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), nullptr) {}
 
 Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent)
     : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
@@ -133,6 +134,7 @@ void Transform::visit(std::function<void(Transform*)> visitor)
   visitor(this);
 
   for (Transform* child : children()) {
+    assert(child != nullptr);
     child->visit(visitor);
   }
 }
