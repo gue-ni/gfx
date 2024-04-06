@@ -195,6 +195,8 @@ std::string ShaderProgram::from_file(const std::string& path)
   return buffer.str();
 }
 
+Texture::Texture(const Image& image) : Texture(image, {}) {}
+
 Texture::Texture(const Image& image, const Params& params) : Texture(GL_TEXTURE_2D)
 {
   glBindTexture(target, m_id);

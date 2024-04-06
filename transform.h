@@ -84,5 +84,7 @@ class Transform
   glm::vec3 local_z_axis() const;
 
   void visit(std::function<void(Transform *)> visitor);
+
+  inline Transform *operator[](std::size_t index) { return m_children[index]; }
 };
 }  // namespace gfx
