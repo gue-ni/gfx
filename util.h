@@ -14,7 +14,7 @@ constexpr glm::vec3 rgb(T r, T g, T b)
 }
 
 template <typename T>
-constexpr glm::vec3 rgba(T r, T g, T b, T a)
+constexpr glm::vec4 rgba(T r, T g, T b, T a)
 {
   return glm::vec4(static_cast<float>(r), static_cast<float>(g), static_cast<float>(b), static_cast<float>(a)) / 255.0f;
 }
@@ -27,4 +27,24 @@ constexpr glm::vec3 rgb(uint32_t hex)
   uint32_t b = (hex & 0x0000ffU) >> 0;
   return rgb(r, g, b);
 }
+
+constexpr glm::vec4 rgba(uint32_t hex)
+{
+  uint32_t r = (hex & 0xff000000U) >> 24;
+  uint32_t g = (hex & 0x00ff0000U) >> 16;
+  uint32_t b = (hex & 0x0000ff00U) >> 8;
+  uint32_t a = (hex & 0x000000ffU) >> 0;
+  return rgba(r, g, b, a);
+}
+
+// a selection of colors
+namespace color
+{
+
+constexpr glm::vec4 MAGENTA = gfx::rgba(0xf7'00'f7'ff);
+
+constexpr glm::vec4 LEARNOPENGL = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
+
+}  // namespace color
+
 }  // namespace gfx
