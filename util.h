@@ -6,6 +6,12 @@
 namespace gfx
 {
 
+constexpr float PI = 3.1415926535f;
+
+constexpr float TWO_PI = 2.0f * PI;
+
+constexpr float HALF_PI = PI / 2.0f;
+
 // [0, 255] -> [0, 1]
 template <typename T>
 constexpr glm::vec3 rgb(T r, T g, T b)
