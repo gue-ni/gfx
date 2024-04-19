@@ -41,9 +41,9 @@ constexpr glm::vec4 rgba(uint32_t hex)
 namespace color
 {
 
-constexpr glm::vec4 MAGENTA = gfx::rgba(0xf7'00'f7'ff);
+constexpr glm::vec3 MAGENTA = gfx::rgb(0xf700f7);
 
-constexpr glm::vec4 LEARNOPENGL = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
+constexpr glm::vec3 LEARNOPENGL = gfx::rgb(0x334C4C);
 
 }  // namespace color
 

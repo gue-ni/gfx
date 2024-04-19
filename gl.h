@@ -133,7 +133,7 @@ class ShaderProgram : public Object
   ~ShaderProgram();
   void bind() const;
   void unbind() const;
-  void load();
+  bool load(); // return true on success
   void set_uniform(const std::string& name, GLint value) const;
   void set_uniform(const std::string& name, GLuint value) const;
   void set_uniform(const std::string& name, GLfloat value) const;

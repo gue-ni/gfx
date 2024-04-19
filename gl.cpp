@@ -34,31 +34,43 @@ void ShaderProgram::bind() const { glUseProgram(m_id); }
 
 void ShaderProgram::unbind() const { glUseProgram(0); }
 
-void ShaderProgram::load()
+bool ShaderProgram::load()
 {
   if (m_vertex_shader_path.empty() || m_fragment_shader_path.empty()) {
-    return;
+    return false;
   }
 
   char* vertex_shader_source = read_from_file_and_handle_includes(m_vertex_shader_path);
+
+  if (!vertex_shader_source) {
+    return false;
+  }
+
   char* fragment_shader_source = read_from_file_and_handle_includes(m_fragment_shader_path);
 
-  if (!(vertex_shader_source && fragment_shader_source)) {
-    return;
+  if (!fragment_shader_source) {
+    return false;
   }
 
   GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, vertex_shader_source);
   GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
 
-  GLuint id = create_program(vertex_shader, fragment_shader);
-
   free(vertex_shader_source);
   free(fragment_shader_source);
 
-  if (id != 0) {
-    if (m_id != 0) glDeleteProgram(m_id);
-    m_id = id;
+  GLuint id = create_program(vertex_shader, fragment_shader);
+
+  if (id == 0) {
+    return false;
   }
+
+  // if there is already a shader, delete old shader
+  if (m_id != 0) {
+    glDeleteProgram(m_id);
+  }
+
+  m_id = id;
+  return true;
 }
 
 GLuint ShaderProgram::create_shader(GLenum shader_type, const char* source)
@@ -70,11 +82,12 @@ GLuint ShaderProgram::create_shader(GLenum shader_type, const char* source)
   glShaderSource(shader, 1, &source, NULL);
   glCompileShader(shader);
   glGetShaderiv(shader, GL_COMPILE_STATUS, &loaded);
+
   if (!loaded) {
     glGetShaderInfoLog(shader, 512, NULL, log);
-    std::cerr << "Error:\n" << log;
     std::cerr << source << std::endl;
-    shader = 0;
+    std::cerr << "Error:\n" << log;
+    return 0;
   }
 
   return shader;
