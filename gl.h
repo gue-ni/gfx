@@ -40,7 +40,7 @@ struct Vertex {
 // abstract opengl object
 struct Object {
   Object() = default;
-  ~Object() = default;
+  virtual ~Object() = default;
 
   Object(const Object& src) = delete;
   Object& operator=(const Object& rhs) = delete;

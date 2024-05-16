@@ -41,6 +41,7 @@ class Transform
 
  public:
   Transform();
+  virtual ~Transform() = default;
   Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, Transform *parent = nullptr);
 
   Drawable *drawable = nullptr;
