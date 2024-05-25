@@ -7,7 +7,7 @@
 
 #define STB_INCLUDE_LINE_NONE
 #define STB_INCLUDE_IMPLEMENTATION
-#include "stb_include.h"
+#include "stb/stb_include.h"
 
 void check_gl_error(const char* stmt, const char* fname, int line)
 {
