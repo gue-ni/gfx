@@ -2,6 +2,18 @@
 
 namespace gfx
 {
+Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), nullptr) {}
+
+Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent)
+    : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
+{
+  update_transform();
+}
+
+Transform::~Transform() 
+{
+}
+
 void Transform::update_transform()
 {
   m_local_transform = compute_local_transform();
@@ -11,14 +23,6 @@ void Transform::update_transform()
     assert(child != nullptr);
     child->update_transform();
   }
-}
-
-Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), nullptr) {}
-
-Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent)
-    : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
-{
-  update_transform();
 }
 
 Transform* Transform::parent() const { return m_parent; }

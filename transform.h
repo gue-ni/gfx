@@ -7,6 +7,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <vector>
+#include <memory>
 
 // optional render information
 class Drawable;
@@ -41,10 +42,10 @@ class Transform
 
  public:
   Transform();
-  virtual ~Transform() = default;
+  virtual ~Transform();
   Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, Transform *parent = nullptr);
 
-  Drawable *drawable = nullptr;
+  std::shared_ptr<Drawable> drawable = nullptr;
 
   Transform *parent() const;
   std::vector<Transform *> children() const;
