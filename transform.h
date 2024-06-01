@@ -28,13 +28,16 @@ inline glm::vec3 inverse_transform(const glm::mat4 &matrix, const glm::vec3 &vec
 class Transform
 {
  protected:
+  static uint32_t m_next_id;
+  const uint32_t m_id;
+
   glm::vec3 m_local_position;
   glm::quat m_local_rotation;
   glm::vec3 m_local_scale;
   glm::mat4 m_local_transform, m_world_transform;
 
   Transform *m_parent = nullptr;
-  std::vector<Transform *> m_children;
+  std::vector<std::unique_ptr<Transform>> m_children;
 
   glm::mat4 compute_local_transform() const;
 
@@ -48,13 +51,13 @@ class Transform
   std::shared_ptr<Drawable> drawable = nullptr;
 
   Transform *parent() const;
-  std::vector<Transform *> children() const;
+  std::vector<std::unique_ptr<Transform>> children() const;
 
   glm::vec3 local_position() const;
   glm::vec3 local_scale() const;
   glm::quat local_rotation() const;
 
-  void add_child(Transform *child);
+  void add_child(std::unique_ptr<Transform> child);
   void set_parent(Transform *parent);
   void set_local_position(const glm::vec3 &position);
   void set_local_scale(const glm::vec3 &scale);
@@ -87,6 +90,6 @@ class Transform
 
   void visit(std::function<void(Transform *)> visitor);
 
-  inline Transform *operator[](std::size_t index) { return m_children[index]; }
+  inline Transform *operator[](std::size_t index) { return m_children[index].get(); }
 };
 }  // namespace gfx
