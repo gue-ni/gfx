@@ -239,8 +239,8 @@ void Texture::generate_mipmap() { glGenerateMipmap(target); }
 std::unique_ptr<Texture> Texture::load(const std::string& path, const Params& params)
 {
   Image image;
-  image.read(path, params.flip_vertically);
-  if (!image.loaded()) return nullptr;
+  image.load(path, params.flip_vertically);
+  if (!image.is_loaded()) return nullptr;
   return std::make_unique<Texture>(image, params);
 }
 
@@ -254,9 +254,9 @@ std::unique_ptr<CubemapTexture> CubemapTexture::load(const std::vector<std::stri
 
   for (int i = 0; i < 6; i++) {
     Image image;
-    image.read(paths[i]);
+    image.load(paths[i]);
 
-    if (!image.loaded()) {
+    if (!image.is_loaded()) {
       std::cerr << "Failed to load " << paths[i] << std::endl;
       return nullptr;
     }

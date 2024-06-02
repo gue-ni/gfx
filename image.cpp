@@ -52,26 +52,26 @@ Image::Format Image::format() const
   return formats[m_channels - 1];
 }
 
-void Image::read(const std::string& path, bool flip_vertically)
+void Image::load(const std::string& path, bool flip_vertically)
 {
   stbi_set_flip_vertically_on_load(flip_vertically);
   m_data = stbi_load(path.c_str(), &m_width, &m_height, &m_channels, 0);
 }
 
-void Image::read_from_buffer(const unsigned char* buffer, int len)
+void Image::load_from_memory(const unsigned char* buffer, int len)
 {
   m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &m_channels, 3);
   m_channels = 3;
 }
 
-bool Image::write(const std::string& path) const
+bool Image::write_png(const std::string& path) const
 {
   return stbi_write_png(path.c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
 }
 
 glm::u8vec4 Image::pixel(int x, int y) const
 {
-  assert(loaded());
+  assert(is_loaded());
   assert(0 <= x && x <= m_width);
   assert(0 <= y && y <= m_height);
 
