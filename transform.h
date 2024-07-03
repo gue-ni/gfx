@@ -6,8 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <vector>
 #include <memory>
+#include <vector>
 
 // optional render information
 class Drawable;
@@ -91,5 +91,11 @@ class Transform
   void visit(std::function<void(Transform *)> visitor);
 
   inline Transform *operator[](std::size_t index) { return m_children[index].get(); }
+};
+
+class Scene : public Transform
+{
+ public:
+  void set_parent(Transform *parent) = delete;
 };
 }  // namespace gfx
