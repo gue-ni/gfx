@@ -2,12 +2,10 @@
 
 namespace gfx
 {
-uint32_t Transform::m_next_id = 0u;
-
 Transform::Transform() : Transform(glm::vec3(0.0f), glm::quat(glm::vec3(0.0f)), glm::vec3(1.0f), nullptr) {}
 
 Transform::Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale, Transform* parent)
-    : m_id(m_next_id++), m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
+    : m_local_position(position), m_local_rotation(rotation), m_local_scale(scale), m_parent(parent)
 {
   update_transform();
 }
@@ -21,7 +19,7 @@ void Transform::update_transform()
   m_local_transform = compute_local_transform();
   m_world_transform = m_parent ? (m_parent->world_transform() * m_local_transform) : m_local_transform;
 
-  for (auto& child : m_children) {
+  for (Transform* child : m_children) {
     assert(child != nullptr);
     child->update_transform();
   }
@@ -29,7 +27,7 @@ void Transform::update_transform()
 
 Transform* Transform::parent() const { return m_parent; }
 
-std::vector<std::unique_ptr<Transform>> Transform::children() const { return m_children; }
+std::vector<Transform*> Transform::children() const { return m_children; }
 
 glm::vec3 Transform::local_position() const { return m_local_position; }
 
@@ -51,11 +49,11 @@ void Transform::set_parent(Transform* parent)
   update_transform();
 }
 
-void Transform::add_child(std::unique_ptr<Transform> child)
+void Transform::add_child(Transform* child)
 {
   assert(child->parent() == nullptr);
   child->set_parent(this);
-  m_children.push_back(std::move(child));
+  m_children.push_back(child);
 }
 
 void Transform::set_local_scale(const glm::vec3& scale)
@@ -139,7 +137,7 @@ void Transform::visit(std::function<void(Transform*)> visitor)
 {
   visitor(this);
 
-  for (auto& child : children()) {
+  for (Transform* child : children()) {
     assert(child != nullptr);
     child->visit(visitor);
   }
