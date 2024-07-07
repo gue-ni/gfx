@@ -95,4 +95,5 @@ class Scene : public Transform
  public:
   void set_parent(Transform *parent) = delete;
 };
+
 }  // namespace gfx
