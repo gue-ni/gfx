@@ -22,6 +22,10 @@ namespace gfx
 
 namespace gl
 {
+
+ShaderProgram::ShaderProgram(const std::filesystem::path& vertex_shader_path, const std::filesystem::path& fragment_shader_path) 
+   : ShaderProgram(vertex_shader_path.string(), fragment_shader_path.string()) {}
+
 ShaderProgram::ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
     : m_vertex_shader_path(vertex_shader_path), m_fragment_shader_path(fragment_shader_path)
 {
@@ -159,20 +163,12 @@ void ShaderProgram::set_uniform(const std::string& name, const glm::mat4& value)
   glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-char* ShaderProgram::read_from_file_and_handle_includes(const std::string& path)
+char* ShaderProgram::read_from_file_and_handle_includes(const std::filesystem::path& path)
 {
-  std::string filename = path;
-  std::string directory = "";
-
-  size_t last_slash_pos = path.find_last_of('/');
-
-  if (last_slash_pos != std::string::npos) {
-    directory = path.substr(0, last_slash_pos);
-    filename = path.substr(last_slash_pos + 1);
-  }
+  auto shader_dir = path.parent_path();
 
   char error[512] = "";
-  char* src = stb_include_file(path.c_str(), "", directory.data(), error);
+  char* src = stb_include_file(path.string().c_str(), "", shader_dir.string().c_str(), error);
 
   std::string error_string = std::string(error);
 
@@ -183,11 +179,11 @@ char* ShaderProgram::read_from_file_and_handle_includes(const std::string& path)
   return src;
 }
 
-std::string ShaderProgram::from_file(const std::string& path)
+std::string ShaderProgram::from_file(const std::filesystem::path& path)
 {
   std::ifstream file(path);
   if (!file.is_open()) {
-    std::cerr << "Failed to open " << path << std::endl;
+    std::cerr << "Failed to open " << path.string() << std::endl;
     return std::string();
   }
 

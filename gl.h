@@ -8,6 +8,7 @@
 #include <glm/gtx/io.hpp>
 #include <memory>
 #include <vector>
+#include <filesystem>
 
 #include "image.h"
 
@@ -130,6 +131,7 @@ class ShaderProgram : public Object
   };
 
   ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
+  ShaderProgram(const std::filesystem::path& vertex_shader_path, const std::filesystem::path& fragment_shader_path);
   ~ShaderProgram();
   void bind() const;
   void unbind() const;
@@ -142,8 +144,8 @@ class ShaderProgram : public Object
   void set_uniform(const std::string& name, const glm::vec4& value) const;
   void set_uniform(const std::string& name, const glm::mat3& value) const;
   void set_uniform(const std::string& name, const glm::mat4& value) const;
-  static std::string from_file(const std::string& path);
-  static char* read_from_file_and_handle_includes(const std::string& path);
+  static std::string from_file(const std::filesystem::path& path);
+  static char* read_from_file_and_handle_includes(const std::filesystem::path& path);
 
  private:
   std::string m_vertex_shader_path, m_fragment_shader_path;
