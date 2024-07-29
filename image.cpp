@@ -60,10 +60,10 @@ Image::Format Image::format() const
   return formats[m_channels - 1];
 }
 
-void Image::load(const std::string& path, bool flip_vertically)
+void Image::load(const std::filesystem::path& path, bool flip_vertically)
 {
   stbi_set_flip_vertically_on_load(flip_vertically);
-  m_data = stbi_load(path.c_str(), &m_width, &m_height, &m_channels, 0);
+  m_data = stbi_load(path.string().c_str(), &m_width, &m_height, &m_channels, 0);
   m_allocated = true;
 }
 
@@ -83,9 +83,9 @@ void Image::load_from_array(unsigned char* buffer, int width, int height, int ch
   m_allocated = false;
 }
 
-bool Image::write_png(const std::string& path) const
+bool Image::write_png(const std::filesystem::path& path) const
 {
-  return stbi_write_png(path.c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
+  return stbi_write_png(path.string().c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
 }
 
 glm::u8vec4 Image::pixel(int x, int y) const
