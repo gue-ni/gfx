@@ -23,8 +23,11 @@ namespace gfx
 namespace gl
 {
 
-ShaderProgram::ShaderProgram(const std::filesystem::path& vertex_shader_path, const std::filesystem::path& fragment_shader_path) 
-   : ShaderProgram(vertex_shader_path.string(), fragment_shader_path.string()) {}
+ShaderProgram::ShaderProgram(const std::filesystem::path& vertex_shader_path,
+                             const std::filesystem::path& fragment_shader_path)
+    : ShaderProgram(vertex_shader_path.string(), fragment_shader_path.string())
+{
+}
 
 ShaderProgram::ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
     : m_vertex_shader_path(vertex_shader_path), m_fragment_shader_path(fragment_shader_path)
@@ -236,7 +239,7 @@ std::unique_ptr<Texture> Texture::load(const std::string& path, const Params& pa
 {
   Image image;
   image.load(path, params.flip_vertically);
-  if (!image.is_loaded()) return nullptr;
+  if (!image.is_valid()) return nullptr;
   return std::make_unique<Texture>(image, params);
 }
 
@@ -252,7 +255,7 @@ std::unique_ptr<CubemapTexture> CubemapTexture::load(const std::vector<std::stri
     Image image;
     image.load(paths[i]);
 
-    if (!image.is_loaded()) {
+    if (!image.is_valid()) {
       std::cerr << "Failed to load " << paths[i] << std::endl;
       return nullptr;
     }

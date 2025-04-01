@@ -10,6 +10,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
+constexpr int DEFAULT_IMAGE_CHANNELS = 3;
+
 namespace gfx
 {
 
@@ -17,7 +19,9 @@ Image::Image() noexcept : m_data(nullptr), m_width(0), m_height(0), m_channels(0
 
 Image::Image(const unsigned char* buffer, int len) noexcept : Image()
 {
-  m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &m_channels, 3);
+  int channels_in_file;
+  m_channels = DEFAULT_IMAGE_CHANNELS;
+  m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &channels_in_file, m_channels);
 }
 
 Image::Image(Image&& other) noexcept : Image() { *this = std::move(other); }
@@ -72,27 +76,39 @@ Image::Format Image::format() const
 
 bool Image::load(const std::filesystem::path& path, bool flip_vertically)
 {
+  int channels_in_file;
+  m_channels = DEFAULT_IMAGE_CHANNELS;
   stbi_set_flip_vertically_on_load(flip_vertically);
-  m_data = stbi_load(path.string().c_str(), &m_width, &m_height, &m_channels, 0);
+  m_data = stbi_load(path.string().c_str(), &m_width, &m_height, &channels_in_file, m_channels);
   return is_valid();
 }
 
 bool Image::write_png(const std::filesystem::path& path) const
 {
+  if (!is_valid()) {
+    return false;
+  }
   return stbi_write_png(path.string().c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
 }
 
 glm::u8vec4 Image::pixel(int x, int y) const
 {
-  assert(is_loaded());
-  assert(0 <= x && x <= m_width);
-  assert(0 <= y && y <= m_height);
-  int i = (y * m_width + x) * 3;
-  return glm::u8vec4(m_data[i + 0], m_data[i + 1], m_data[i + 2], 255U);
+  if (is_valid()) {
+    assert(0 <= x && x <= m_width);
+    assert(0 <= y && y <= m_height);
+    int i = (y * m_width + x) * 3;
+    return glm::u8vec4(m_data[i + 0], m_data[i + 1], m_data[i + 2], 255U);
+  } else {
+    return glm::u8vec4(0);
+  }
 }
 
 glm::u8vec4 Image::sample(const glm::vec2& uv, Sampling algorithm) const
 {
+  if (!is_valid()) {
+    return glm::u8vec4(0);
+  }
+
   switch (algorithm) {
     // nearest neighbour
     case gfx::Image::NEAREST: {

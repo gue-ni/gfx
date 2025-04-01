@@ -42,7 +42,6 @@ class Image
   glm::u8vec4 sample(const glm::vec2&, Sampling algorithm = NEAREST) const;
 
   bool is_valid() const;
-  bool is_loaded() const { return m_data != nullptr; }
 
  private:
   unsigned char* m_data = nullptr;
