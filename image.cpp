@@ -13,36 +13,44 @@
 namespace gfx
 {
 
-Image::Image() : m_data(nullptr), m_width(0), m_height(0), m_channels(0), m_allocated(false) {}
+Image::Image() noexcept : m_data(nullptr), m_width(0), m_height(0), m_channels(0) {}
 
-Image::Image(unsigned char* data, int width, int height, int channels)
-    : m_data(data), m_width(width), m_height(height), m_channels(channels), m_allocated(false)
+Image::Image(const unsigned char* buffer, int len) noexcept : Image()
 {
+  m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &m_channels, 3);
 }
 
-Image::~Image()
-{
-  if (m_data != nullptr && m_allocated) {
-    stbi_image_free(m_data);
-  }
-}
-
-Image::Image(Image&& other) noexcept
-    : m_data(std::exchange(other.m_data, nullptr)),
-      m_width(other.width()),
-      m_height(other.height()),
-      m_channels(other.channels()),
-      m_allocated(false)
-{
-}
+Image::Image(Image&& other) noexcept : Image() { *this = std::move(other); }
 
 Image& Image::operator=(Image&& other) noexcept
 {
-  std::swap(m_data, other.m_data);
-  m_width = other.width();
-  m_height = other.height();
-  m_channels = other.channels();
+  if (this != &other) {
+    cleanup();
+    m_data = other.m_data;
+    m_width = other.m_width;
+    m_height = other.m_height;
+    m_channels = other.m_channels;
+    other.reset();
+  }
   return *this;
+}
+
+Image::~Image() noexcept { cleanup(); }
+
+void Image::cleanup()
+{
+  if (m_data) {
+    stbi_image_free(m_data);
+  }
+  reset();
+}
+
+void Image::reset()
+{
+  m_data = nullptr;
+  m_width = 0;
+  m_height = 0;
+  m_channels = 0;
 }
 
 unsigned char* Image::data() const { return m_data; }
@@ -53,6 +61,8 @@ int Image::height() const { return m_height; }
 
 int Image::channels() const { return m_channels; }
 
+bool Image::is_valid() const { return (m_data != nullptr) && (0 < m_width) && (0 < m_height) && (0 < m_channels); }
+
 Image::Format Image::format() const
 {
   assert(1 <= m_channels && m_channels <= 4);
@@ -60,27 +70,11 @@ Image::Format Image::format() const
   return formats[m_channels - 1];
 }
 
-void Image::load(const std::filesystem::path& path, bool flip_vertically)
+bool Image::load(const std::filesystem::path& path, bool flip_vertically)
 {
   stbi_set_flip_vertically_on_load(flip_vertically);
   m_data = stbi_load(path.string().c_str(), &m_width, &m_height, &m_channels, 0);
-  m_allocated = true;
-}
-
-void Image::load_from_memory(const unsigned char* buffer, int len)
-{
-  m_data = stbi_load_from_memory(buffer, len, &m_width, &m_height, &m_channels, 3);
-  m_channels = 3;
-  m_allocated = false;
-}
-
-void Image::load_from_array(unsigned char* buffer, int width, int height, int channels)
-{
-  m_data = buffer;
-  m_width = width;
-  m_height = height;
-  m_channels = channels;
-  m_allocated = false;
+  return is_valid();
 }
 
 bool Image::write_png(const std::filesystem::path& path) const
