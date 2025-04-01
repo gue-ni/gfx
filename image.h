@@ -17,13 +17,50 @@ class Image
 
   enum Sampling { NEAREST, LINEAR };
 
-  Image();
-  Image(unsigned char* data, int width, int height, int channels);
-  ~Image();
-  Image(const Image& other) = delete;
-  Image& operator=(const Image& other) = delete;
-  Image(Image&& other) noexcept;
-  Image& operator=(Image&& other) noexcept;
+  Image()
+       : m_data(nullptr)
+       , m_width(0)
+       , m_height(0)
+       , m_channels(0)
+   {
+   }
+
+   Image(int width, int height, int channels)
+   {
+      m_data = new unsigned char[width * height * channels]();
+      m_width = width;
+      m_height = height;
+      m_channels = channels;
+   }
+
+   Image(const Image& other)           = delete;
+   Image& operator=(const Image& that) = delete;
+
+   Image(Image&& other)
+       : Image()
+   {
+      *this = std::move(other);
+   }
+
+   Image& operator=(Image&& other) noexcept
+   {
+      if(this != &other)
+      {
+         cleanup();
+         m_data     = other.m_data;
+         m_width    = other.m_width;
+         m_height   = other.m_height;
+         m_channels = other.m_channels;
+         other.reset();
+      }
+      return *this;
+   }
+
+   ~Image() noexcept
+   {
+      printf("%s\n", __PRETTY_FUNCTION__);
+      cleanup();
+   }
 
   unsigned char* data() const;
   int width() const;
@@ -42,5 +79,26 @@ class Image
   bool m_allocated;
   unsigned char* m_data = nullptr;
   int m_width, m_height, m_channels;
+
+
+   void cleanup()
+   {
+      printf("%s\n", __PRETTY_FUNCTION__);
+      if(m_data)
+      {
+         printf("%s delete %p\n", __PRETTY_FUNCTION__, (void*) m_data);
+         delete[] m_data;
+      }
+      reset();
+   }
+
+   void reset()
+   {
+      printf("%s\n", __PRETTY_FUNCTION__);
+      m_data     = nullptr;
+      m_width    = 0;
+      m_height   = 0;
+      m_channels = 0;
+   }
 };
 }  // namespace gfx
