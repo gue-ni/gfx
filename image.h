@@ -49,5 +49,6 @@ class Image
 
   void cleanup();
   void reset();
+  void swap(Image&);
 };
 }  // namespace gfx

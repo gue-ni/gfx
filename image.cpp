@@ -30,11 +30,7 @@ Image& Image::operator=(Image&& other) noexcept
 {
   if (this != &other) {
     cleanup();
-    m_data = other.m_data;
-    m_width = other.m_width;
-    m_height = other.m_height;
-    m_channels = other.m_channels;
-    other.reset();
+    swap(other);
   }
   return *this;
 }
@@ -55,6 +51,25 @@ void Image::reset()
   m_width = 0;
   m_height = 0;
   m_channels = 0;
+}
+
+void Image::swap(Image& other)
+{
+  Image tmp;
+  tmp.m_data     = m_data;
+  tmp.m_width    = m_width;
+  tmp.m_height   = m_height;
+  tmp.m_channels = m_channels;
+
+  m_data     = other.m_data;
+  m_width    = other.m_width;
+  m_height   = other.m_height;
+  m_channels = other.m_channels;
+
+  other.m_data     = tmp.m_data;
+  other.m_width    = tmp.m_width;
+  other.m_height   = tmp.m_height;
+  other.m_channels = tmp.m_channels;
 }
 
 unsigned char* Image::data() const { return m_data; }
