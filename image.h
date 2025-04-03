@@ -18,6 +18,7 @@ class Image
   enum Sampling { NEAREST, LINEAR };
 
   Image() noexcept;
+  Image(int width, int height, int channels) noexcept;
   Image(const unsigned char* buffer, int len) noexcept;
 
   Image(const Image& other) = delete;
@@ -40,6 +41,8 @@ class Image
 
   glm::u8vec4 pixel(int x, int y) const;
   glm::u8vec4 sample(const glm::vec2&, Sampling algorithm = NEAREST) const;
+
+  void set_pixel(int x, int y, const unsigned char* pixel);
 
   bool is_valid() const;
 

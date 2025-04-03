@@ -17,6 +17,16 @@ namespace gfx
 
 Image::Image() noexcept : m_data(nullptr), m_width(0), m_height(0), m_channels(0) {}
 
+Image::Image(int width, int height, int channels) noexcept
+    : m_data(nullptr), m_width(width), m_height(height), m_channels(channels)
+{
+  int len = sizeof(*m_data) * width * height * channels;
+  m_data = (unsigned char*)STBI_MALLOC(len);
+  if (m_data) {
+    std::memset(m_data, 0x0, len);
+  }
+}
+
 Image::Image(const unsigned char* buffer, int len) noexcept : Image()
 {
   int channels_in_file;
@@ -91,21 +101,33 @@ bool Image::write_png(const std::filesystem::path& path) const
   return stbi_write_png(path.string().c_str(), m_width, m_height, m_channels, m_data, m_width * m_channels) == 1;
 }
 
+void Image::set_pixel(int x, int y, const unsigned char* pixel)
+{
+  if (is_valid() && (0 <= x && x < m_width) && (0 <= y && y < m_height)) {
+    int i = (y * m_width + x) * m_channels;
+    for (int c = 0; c < m_channels; c++) {
+      m_data[i + c] = pixel[c];
+    }
+  }
+}
+
 glm::u8vec4 Image::pixel(int x, int y) const
 {
-  if (is_valid()) {
-    assert(0 <= x && x <= m_width);
-    assert(0 <= y && y <= m_height);
-    int i = (y * m_width + x) * 3;
-    return glm::u8vec4(m_data[i + 0], m_data[i + 1], m_data[i + 2], 255U);
-  } else {
-    return glm::u8vec4(0);
+  glm::u8vec4 pixel(0);
+
+  if (is_valid() && (0 <= x && x < m_width) && (0 <= y && y < m_height)) {
+    int i = (y * m_width + x) * m_channels;
+    for (int c = 0; c < glm::min(m_channels, 4); c++) {
+      pixel[c] = m_data[i + c];
+    }
   }
+
+  return pixel;
 }
 
 glm::u8vec4 Image::sample(const glm::vec2& uv, Sampling algorithm) const
 {
-  if (!is_valid()) {
+  if (!is_valid() || !(0.f <= uv.x && uv.x <= 1.0f) || !(0.f <= uv.y && uv.y <= 1.0f)) {
     return glm::u8vec4(0);
   }
 
@@ -121,20 +143,20 @@ glm::u8vec4 Image::sample(const glm::vec2& uv, Sampling algorithm) const
       float x = uv.x * (m_width - 1);
       float y = uv.y * (m_height - 1);
 
-      int x0 = static_cast<int>(x);
-      int y0 = static_cast<int>(y);
+      int x0 = (int)x;
+      int y0 = (int)y;
       float x_frac = x - x0;
       float y_frac = y - x0;
 
-      glm::u8vec4 top_left = pixel(x0, y0);
-      glm::u8vec4 top_right = pixel(x0 + 1, y0);
-      glm::u8vec4 bottom_left = pixel(x0, y0 + 1);
-      glm::u8vec4 bottom_right = pixel(x0 + 1, y0 + 1);
+      glm::u8vec4 tl = pixel(x0 + 0, y0 + 0);
+      glm::u8vec4 tr = pixel(x0 + 1, y0 + 0);
+      glm::u8vec4 bl = pixel(x0 + 0, y0 + 1);
+      glm::u8vec4 br = pixel(x0 + 1, y0 + 1);
 
-      glm::u8vec4 top_interp = glm::mix(top_left, top_right, x_frac);
-      glm::u8vec4 bottom_interp = glm::mix(bottom_left, bottom_right, x_frac);
+      glm::u8vec4 t = glm::mix(tl, tr, x_frac);
+      glm::u8vec4 b = glm::mix(bl, br, x_frac);
 
-      return glm::mix(top_interp, bottom_interp, y_frac);
+      return glm::mix(t, b, y_frac);
     }
     default:
       assert(false);
