@@ -64,19 +64,19 @@ void Image::reset()
 
 void Image::swap(Image& other)
 {
-  unsigned char * data     = m_data;
-  int width    = m_width;
-  int height   = m_height;
+  unsigned char* data = m_data;
+  int width = m_width;
+  int height = m_height;
   int channels = m_channels;
 
-  m_data     = other.m_data;
-  m_width    = other.m_width;
-  m_height   = other.m_height;
+  m_data = other.m_data;
+  m_width = other.m_width;
+  m_height = other.m_height;
   m_channels = other.m_channels;
 
-  other.m_data     = data;
-  other.m_width    = width;
-  other.m_height   = height;
+  other.m_data = data;
+  other.m_width = width;
+  other.m_height = height;
   other.m_channels = channels;
 }
 
