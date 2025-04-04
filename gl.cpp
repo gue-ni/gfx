@@ -23,10 +23,21 @@ namespace gfx
 namespace gl
 {
 
+ShaderProgram::ShaderProgram(const std::filesystem::path& compute_shader_path)
+    : ShaderProgram(compute_shader_path.string())
+{
+}
+
 ShaderProgram::ShaderProgram(const std::filesystem::path& vertex_shader_path,
                              const std::filesystem::path& fragment_shader_path)
     : ShaderProgram(vertex_shader_path.string(), fragment_shader_path.string())
 {
+}
+
+ShaderProgram::ShaderProgram(const std::string& compute_shader_path) : m_compute_shader_path(compute_shader_path)
+
+{
+  load_cs();
 }
 
 ShaderProgram::ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
@@ -66,6 +77,50 @@ bool ShaderProgram::load()
   free(fragment_shader_source);
 
   GLuint id = create_program(vertex_shader, fragment_shader);
+
+  if (id == 0) {
+    return false;
+  }
+
+  // if there is already a shader, delete old shader
+  if (m_id != 0) {
+    glDeleteProgram(m_id);
+  }
+
+  m_id = id;
+  return true;
+}
+
+bool ShaderProgram::load_cs()
+{
+  if (m_compute_shader_path.empty()) {
+    return false;
+  }
+
+  char* shader_source = read_from_file_and_handle_includes(m_compute_shader_path);
+
+  if (!shader_source) {
+    return false;
+  }
+
+  GLuint compute_shader = create_shader(GL_COMPUTE_SHADER, shader_source);
+
+  free(shader_source);
+
+  int loaded;
+  char log[512];
+
+  GLuint id = glCreateProgram();
+  glAttachShader(id, compute_shader);
+  glLinkProgram(id);
+  glGetProgramiv(id, GL_LINK_STATUS, &loaded);
+  if (!loaded) {
+    glGetProgramInfoLog(m_id, 512, NULL, log);
+    std::cerr << "Error:\n" << log;
+    id = 0;
+  }
+
+  glDeleteShader(compute_shader);
 
   if (id == 0) {
     return false;

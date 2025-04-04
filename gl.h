@@ -130,12 +130,15 @@ class ShaderProgram : public Object
     Geometry = GL_GEOMETRY_SHADER,
   };
 
+  ShaderProgram(const std::string& compute_shader_path);
   ShaderProgram(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
+  ShaderProgram(const std::filesystem::path& compute_shader_path);
   ShaderProgram(const std::filesystem::path& vertex_shader_path, const std::filesystem::path& fragment_shader_path);
   ~ShaderProgram();
   void bind() const;
   void unbind() const;
   bool load(); // return true on success
+  bool load_cs();
   void set_uniform(const std::string& name, GLint value) const;
   void set_uniform(const std::string& name, GLuint value) const;
   void set_uniform(const std::string& name, GLfloat value) const;
@@ -148,7 +151,7 @@ class ShaderProgram : public Object
   static char* read_from_file_and_handle_includes(const std::filesystem::path& path);
 
  private:
-  std::string m_vertex_shader_path, m_fragment_shader_path;
+  std::string m_vertex_shader_path, m_fragment_shader_path, m_compute_shader_path;
   GLuint create_shader(GLenum shader_type, const char* source);
   GLuint create_program(GLuint s0, GLuint s1);
 };
