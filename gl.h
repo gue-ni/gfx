@@ -3,12 +3,12 @@
 #include <GL/glew.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
+#include <filesystem>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/io.hpp>
 #include <memory>
 #include <vector>
-#include <filesystem>
 
 #include "image.h"
 
@@ -40,20 +40,14 @@ struct Vertex {
 
 // abstract opengl object
 struct Object {
-  Object() = default;
-  virtual ~Object() = default;
+  Object() noexcept;
 
-  Object(const Object& src) = delete;
-  Object& operator=(const Object& rhs) = delete;
+  Object(const Object&) = delete;
+  Object& operator=(const Object&) = delete;
 
-  Object(Object&& src) noexcept : m_id(src.m_id) { src.m_id = 0; }
-  Object& operator=(Object&& rhs) noexcept
-  {
-    if (this != &rhs) std::swap(m_id, rhs.m_id);
-    return *this;
-  }
+  Object(Object&&) noexcept;
+  Object& operator=(Object&&) noexcept;
 
-  inline operator GLuint() const noexcept { return m_id; };
   inline GLuint id() const { return m_id; }
 
  protected:
@@ -107,10 +101,19 @@ struct FrameBuffer : public Object {
 };
 
 struct VertexArrayObject : public Object {
-  VertexArrayObject() { GL_CALL(glGenVertexArrays(1, &m_id)); }
+  using Object::Object;
+  VertexArrayObject() : Object() { GL_CALL(glGenVertexArrays(1, &m_id)); }
   ~VertexArrayObject() { glDeleteVertexArrays(1, &m_id); }
   void bind() const { glBindVertexArray(m_id); }
   void unbind() const { glBindVertexArray(0); }
+  VertexArrayObject(VertexArrayObject&& other) noexcept : Object(std::move(other)) {}
+  VertexArrayObject& operator=(VertexArrayObject&& other) noexcept
+  {
+    if (this != &other) {
+      std::swap(m_id, other.m_id);
+    }
+    return *this;
+  }
 };
 
 struct RenderBuffer : public Object {
@@ -137,7 +140,7 @@ class ShaderProgram : public Object
   ~ShaderProgram();
   void bind() const;
   void unbind() const;
-  bool load(); // return true on success
+  bool load();  // return true on success
   bool load_cs();
   void set_uniform(const std::string& name, GLint value) const;
   void set_uniform(const std::string& name, GLuint value) const;
@@ -156,20 +159,27 @@ class ShaderProgram : public Object
   GLuint create_program(GLuint s0, GLuint s1);
 };
 
+struct Params {
+  bool flip_vertically = false;
+  GLint wrap = GL_REPEAT;
+  GLint min_filter = GL_LINEAR_MIPMAP_LINEAR;
+  GLint mag_filter = GL_NEAREST;
+};
+
 struct Texture : public Object {
-  const GLenum target;
-
-  struct Params {
-    bool flip_vertically = false;
-    GLint wrap = GL_REPEAT;
-    GLint min_filter = GL_LINEAR_MIPMAP_LINEAR;
-    GLint mag_filter = GL_NEAREST;
-  };
-
-  Texture(GLenum target_ = GL_TEXTURE_2D) : target(target_) { glGenTextures(1, &m_id); }
+  Texture() : Object() { glGenTextures(1, &m_id); }
   ~Texture() { glDeleteTextures(1, &m_id); }
   Texture(const Image& image);
   Texture(const Image& image, const Params& params);
+  Texture(Texture&& other) noexcept : Object(std::move(other)) {}
+  Texture& operator=(Texture&& other) noexcept
+  {
+    if (this != &other) {
+      std::swap(m_id, other.m_id);
+    }
+    return *this;
+  }
+
   void bind() const;
   void bind(GLuint texture_unit) const;
   void unbind() const;
@@ -182,10 +192,12 @@ struct Texture : public Object {
   static std::unique_ptr<Texture> load(const std::string& path);
 };
 
+#if 0
 struct CubemapTexture : public Texture {
   CubemapTexture() : Texture(GL_TEXTURE_CUBE_MAP) {}
   static std::unique_ptr<CubemapTexture> load(const std::vector<std::string>& paths);
 };
+#endif
 
 }  // namespace gl
 }  // namespace gfx

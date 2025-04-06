@@ -23,6 +23,20 @@ namespace gfx
 namespace gl
 {
 
+Object::Object() noexcept : m_id(0) {}
+
+Object::Object(Object&& rhs) noexcept : Object() { std::swap(m_id, rhs.m_id); }
+
+Object& Object::operator=(Object&& rhs) noexcept
+{
+  if (this != &rhs) {
+    std::swap(m_id, rhs.m_id);
+  }
+
+  return *this;
+}
+
+
 ShaderProgram::ShaderProgram(const std::filesystem::path& compute_shader_path)
     : ShaderProgram(compute_shader_path.string())
 {
@@ -252,54 +266,55 @@ std::string ShaderProgram::from_file(const std::filesystem::path& path)
 
 Texture::Texture(const Image& image) : Texture(image, {}) {}
 
-Texture::Texture(const Image& image, const Params& params) : Texture(GL_TEXTURE_2D)
+Texture::Texture(const Image& image, const Params& params) : Texture()
 {
-  glBindTexture(target, m_id);
+  glBindTexture(GL_TEXTURE_2D, m_id);
 
   set_parameter(GL_TEXTURE_WRAP_S, params.wrap);
   set_parameter(GL_TEXTURE_WRAP_T, params.wrap);
   set_parameter(GL_TEXTURE_MIN_FILTER, params.min_filter);
   set_parameter(GL_TEXTURE_MAG_FILTER, params.mag_filter);
 
-  glTexImage2D(target, 0, image.format(), image.width(), image.height(), 0, image.format(), GL_UNSIGNED_BYTE,
+  glTexImage2D(GL_TEXTURE_2D, 0, image.format(), image.width(), image.height(), 0, image.format(), GL_UNSIGNED_BYTE,
                image.data());
-  glGenerateMipmap(target);
+  glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void Texture::bind(GLuint active_texture) const
 {
   glActiveTexture(GL_TEXTURE0 + active_texture);
-  glBindTexture(target, m_id);
+  glBindTexture(GL_TEXTURE_2D, m_id);
 }
 
-void Texture::bind() const { glBindTexture(target, m_id); }
+void Texture::bind() const { glBindTexture(GL_TEXTURE_2D, m_id); }
 
-void Texture::unbind() const { glBindTexture(target, 0); }
+void Texture::unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }
 
-void Texture::set_parameter(GLenum pname, GLint param) { glTexParameteri(target, pname, param); }
+void Texture::set_parameter(GLenum pname, GLint param) { glTexParameteri(GL_TEXTURE_2D, pname, param); }
 
-void Texture::set_parameter(GLenum pname, GLfloat param) { glTexParameterf(target, pname, param); }
+void Texture::set_parameter(GLenum pname, GLfloat param) { glTexParameterf(GL_TEXTURE_2D, pname, param); }
 
-void Texture::set_parameter(GLenum pname, const GLfloat* param) { glTexParameterfv(target, pname, param); }
+void Texture::set_parameter(GLenum pname, const GLfloat* param) { glTexParameterfv(GL_TEXTURE_2D, pname, param); }
 
 void Texture::set_image(const Image& image)
 {
-  glTexImage2D(target, 0, image.format(), image.width(), image.height(), 0, image.format(), GL_UNSIGNED_BYTE,
+  glTexImage2D(GL_TEXTURE_2D, 0, image.format(), image.width(), image.height(), 0, image.format(), GL_UNSIGNED_BYTE,
                image.data());
 }
 
-void Texture::generate_mipmap() { glGenerateMipmap(target); }
+void Texture::generate_mipmap() { glGenerateMipmap(GL_TEXTURE_2D); }
 
 std::unique_ptr<Texture> Texture::load(const std::string& path, const Params& params)
 {
   Image image;
   image.load(path, params.flip_vertically);
   if (!image.is_valid()) return nullptr;
-  return std::make_unique<Texture>(image, params);
+  return std::make_unique<Texture>();
 }
 
 std::unique_ptr<Texture> Texture::load(const std::string& path) { return Texture::load(path, {}); }
 
+#if 0
 std::unique_ptr<CubemapTexture> CubemapTexture::load(const std::vector<std::string>& paths)
 {
   auto texture = std::make_unique<CubemapTexture>();
@@ -321,6 +336,7 @@ std::unique_ptr<CubemapTexture> CubemapTexture::load(const std::vector<std::stri
 
   return texture;
 }
+#endif
 
 }  // namespace gl
 }  // namespace gfx

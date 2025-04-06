@@ -21,11 +21,11 @@ class Image
   Image(int width, int height, int channels) noexcept;
   Image(const unsigned char* buffer, int len) noexcept;
 
-  Image(const Image& other) = delete;
-  Image& operator=(const Image& that) = delete;
+  Image(const Image& ) = delete;
+  Image& operator=(const Image& ) = delete;
 
-  Image(Image&& other) noexcept;
-  Image& operator=(Image&& other) noexcept;
+  Image(Image&& ) noexcept;
+  Image& operator=(Image&& ) noexcept;
 
   ~Image() noexcept;
 
