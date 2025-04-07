@@ -42,8 +42,10 @@ class Transform
 
  public:
   Transform();
-  virtual ~Transform();
+  Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale = glm::vec3(1.0f));
   Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, Transform *parent = nullptr);
+
+  virtual ~Transform();
 
   std::shared_ptr<Drawable> drawable = nullptr;
 
